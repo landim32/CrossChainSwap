@@ -10,6 +10,27 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <div id="swapModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Swap</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você está prestes a fazer uma conversão de <strong>0.0345 BTC</strong> em <strong>3.453 STX</strong>.</p>
+                    <p><strong>0.0345 BTC</strong> -> tb1qeeqfngu5tnqfkxh3e0rdkj6m2ng2vqsr86lskq</p>
+                    <p>Assim que a transação em BTC atingir <strong>2 confirmações</strong> a transferência dos <strong>3.453 STX</strong> será iniciada para o endereço informado pela sua Leather:</p>
+                    <p><strong>3.453 STX</strong> -> ST2JC8HK79X5QZW8ZXVA0Q6V1ZKAA3Q4VHZP29QAP</p>
+                    <p>Você confirma essa transação?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-md">
             <a class="navbar-brand" href="#">Cross-Chain Exchange</a>

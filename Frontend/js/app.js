@@ -3,7 +3,7 @@
     function doError(msg) {
         $("#errorBox span").text(msg);
         $("#errorBox").show();
-        $("#connectBtn").prop("disabled", true);
+        //$("#connectBtn").prop("disabled", true);
     }
 
     /*
@@ -11,7 +11,9 @@
         doError("Leather Wallet is not installed!");
     }
     */
-    
+
+    $("#connectBtn").prop("disabled", false);
+
     $('input.numericInput').inputNumberFormat({
         'decimal': 8,
         'decimalAuto': 8,
@@ -57,6 +59,7 @@
     $("#connectBtn").on("click", function (e) {
         e.preventDefault();
 
+        $("#swapModal").modal("show");
     });
 
     $("#origSelected").on("change", function (e) {
