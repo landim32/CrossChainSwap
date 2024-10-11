@@ -1,0 +1,491 @@
+﻿{
+  "source": "mockoon:1.13.0",
+  "data": [
+    {
+      "type": "environment",
+      "item": {
+        "uuid": "",
+        "lastMigration": 13,
+        "name": "ApiClientTestesColaboracao",
+        "endpointPrefix": "",
+        "latency": 0,
+        "port": 3001,
+        "routes": [
+          {
+            "uuid": "",
+            "documentation": "",
+            "method": "post",
+            "endpoint": "colaboracao",
+            "responses": [
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 401,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "*",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "401",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "OR",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 500,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "500",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 404,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "404",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{\n  \"cloudId\":\"cloudId\",\n  \"usuarioId\":0,\n  \"cpf\":\"cpf\",\n  \"email\":\"email\"\n}",
+                "latency": 0,
+                "statusCode": 200,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "200",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              }
+            ],
+            "enabled": true,
+            "randomResponse": false
+          },
+          {
+            "uuid": "",
+            "documentation": "",
+            "method": "get",
+            "endpoint": "colaboracao",
+            "responses": [
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 401,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "*",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "query",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "401",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 500,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "query",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "500",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 404,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "query",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "404",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{\n  \"cloudId\":\"cloudId\",\n  \"usuarioId\":0,\n  \"cpf\":\"cpf\",\n  \"email\":\"email\"\n}",
+                "latency": 0,
+                "statusCode": 200,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "query",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "200",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              }
+            ],
+            "enabled": true,
+            "randomResponse": false
+          },
+          {
+            "uuid": "",
+            "documentation": "",
+            "method": "put",
+            "endpoint": "colaboracao",
+            "responses": [
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 401,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "*",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "401",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 500,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "500",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 404,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "404",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{\n  \"cloudId\":\"cloudId\",\n  \"usuarioId\":0,\n  \"cpf\":\"cpf\",\n  \"email\":\"email\"\n}",
+                "latency": 0,
+                "statusCode": 200,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "200",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              }
+            ],
+            "enabled": true,
+            "randomResponse": false
+          },
+          {
+            "uuid": "",
+            "documentation": "",
+            "method": "delete",
+            "endpoint": "colaboracao",
+            "responses": [
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 401,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "*",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "401",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 500,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "500",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{}",
+                "latency": 0,
+                "statusCode": 404,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "404",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              },
+              {
+                "uuid": "",
+                "body": "{\n  \"cloudId\":\"cloudId\",\n  \"usuarioId\":0,\n  \"cpf\":\"cpf\",\n  \"email\":\"email\"\n}",
+                "latency": 0,
+                "statusCode": 200,
+                "label": "",
+                "headers": [],
+                "filePath": "",
+                "sendFileAsBody": false,
+                "rules": [
+                  {
+                    "target": "header",
+                    "modifier": "Authorization",
+                    "value": "token",
+                    "isRegex": false
+                  },
+                  {
+                    "target": "body",
+                    "modifier": "StatusCodeEsperadoConsiderandoUsuarioLogado",
+                    "value": "200",
+                    "isRegex": false
+                  }
+                ],
+                "rulesOperator": "AND",
+                "disableTemplating": false
+              }
+            ],
+            "enabled": true,
+            "randomResponse": false
+          }
+        ],
+        "proxyMode": false,
+        "proxyHost": "",
+        "https": false,
+        "cors": false,
+        "headers": [],
+        "proxyReqHeaders": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "proxyResHeaders": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      }
+    }
+  ]
+}
