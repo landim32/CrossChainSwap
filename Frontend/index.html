@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <!--link rel="stylesheet" href="node_modules/jqwidgets-scripts/jqwidgets/styles/jqx.bootstrap.css"-->
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <div id="swapModal" class="modal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -18,15 +20,18 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Você está prestes a fazer uma conversão de <strong>0.0345 BTC</strong> em <strong>3.453 STX</strong>.</p>
-                    <p><strong>0.0345 BTC</strong> -> tb1qeeqfngu5tnqfkxh3e0rdkj6m2ng2vqsr86lskq</p>
-                    <p>Assim que a transação em BTC atingir <strong>2 confirmações</strong> a transferência dos <strong>3.453 STX</strong> será iniciada para o endereço informado pela sua Leather:</p>
-                    <p><strong>3.453 STX</strong> -> ST2JC8HK79X5QZW8ZXVA0Q6V1ZKAA3Q4VHZP29QAP</p>
-                    <p>Você confirma essa transação?</p>
+                    <p>You are about to make a conversion of <strong class="modalOrigCoin">0.0345 BTC</strong> into <strong class="modalDestCoin">3,453 STX</strong>.</p>
+                    <p><strong class="modalOrigCoin">0.0345 BTC</strong> -> <span class="modalOrigAddr">tb1qeeqfngu5tnqfkxh3e0rdkj6m2ng2vqsr86lskq</span></p>
+                    <p>As soon as the BTC transaction reaches <strong>3 confirmations</strong> the transfer of
+                        <strong class="modalDestCoin">3,453 STX</strong> will be initiated to the address provided by your Leather Wallet:
+                    </p>
+                    <p><strong class="modalDestCoin">3,453 STX</strong> -> <span class="modalDestAddr">ST2JC8HK79X5QZW8ZXVA0Q6V1ZKAA3Q4VHZP29QAP</span></p>
+                    <p>A fee of <strong class=="modalFee">230 satoshis</strong> will be charged, please confirm if you agree.</p>
+                    <p>Do you confirm this transaction?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Confirm</button>
+                    <button id="confirmBtn" type="button" class="btn btn-primary">Confirm</button>
                 </div>
             </div>
         </div>
@@ -34,7 +39,25 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-md">
             <a class="navbar-brand" href="#">Cross-Chain Exchange</a>
-            <!--button type="button" class="btn btn-primary">Connect</button-->
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link" href="https://leather.io/install" target="_blank">Install Leather</a>
+                </div>
+                <ul class="navbar-nav ms-auto">
+                    <li id="navbarUser" class="nav-item dropdown" style="display: none">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-user"></i>
+                            <span id="userName">Anonymous</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" id="disconnectBtn" href="#">Disconnect</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <button id="connectBtn" type="button" class="btn btn-primary">Connect</button>
         </div>
     </nav>
 
@@ -45,6 +68,8 @@
                     <form>
                         <input type="hidden" id="BtcProportion" name="BtcProportion" value="0">
                         <input type="hidden" id="StxProportion" name="StxProportion" value="0">
+                        <input type="hidden" id="BtcAddress" name="BtcAddress" value="">
+                        <input type="hidden" id="StxAddress" name="StxAddress" value="">
                         <div class="row">
                             <h1 class="text-center" id="title" data-coin="bitcoin">
                                 BTC to STX
@@ -63,13 +88,18 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="amount" class="form-label" style="float: right">Disponível 0.223423 BTC</label>
-                                                <input type="text" class="numericInput form-control form-control-lg text-end" id="origAmount" value="0.00000000" placeholder="Enter amount" required>
+                                                <label for="amount" class="form-label" style="float: right">Disponível
+                                                    0.223423 BTC</label>
+                                                <input type="text"
+                                                    class="numericInput form-control form-control-lg text-end"
+                                                    id="origAmount" value="0.00000000" placeholder="Enter amount"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 offset-md-6">
-                                                <button type="button" class="btn btn-danger btn-sm" style="float: right">Máx.</button>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    style="float: right">Máx.</button>
                                             </div>
                                         </div>
                                     </div>
@@ -79,7 +109,8 @@
                         <div class="row mb-3">
                             <div class="col-md-2 offset-md-5">
                                 <div class="d-grid gap-2">
-                                    <button id="changeBtn" class="btn btn-warning"><i class="fa fa-retweet"></i></button>
+                                    <button id="changeBtn" class="btn btn-warning"><i
+                                            class="fa fa-retweet"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -96,8 +127,12 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="amount" class="form-label" style="float: right">Estoque 100.000000 STX</label>
-                                                <input type="text" class="numericInput form-control form-control-lg text-end" id="destAmount" value="0.00000000" placeholder="Enter amount" required>
+                                                <label for="amount" class="form-label" style="float: right">Estoque
+                                                    100.000000 STX</label>
+                                                <input type="text"
+                                                    class="numericInput form-control form-control-lg text-end"
+                                                    id="destAmount" value="0.00000000" placeholder="Enter amount"
+                                                    required>
                                             </div>
                                         </div>
                                     </div>
@@ -112,10 +147,11 @@
                         <div id="errorBox" class="alert alert-danger" style="display: none">
                             <i class="fa fa-warning"></i>
                             <span>An example danger alert with an icon</span>
-                          </div>
+                        </div>
                         <div class="row">
                             <div class="d-grid gap-2">
-                                <button type="button" id="connectBtn" class="btn btn-primary btn-lg" disabled="disabled">Swap</button>
+                                <button type="button" id="openModalBtn" class="btn btn-primary btn-lg"
+                                    disabled="disabled">Swap</button>
                             </div>
                         </div>
                     </form>
@@ -128,4 +164,5 @@
     <script src="js/input-number-format.jquery.min.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>
