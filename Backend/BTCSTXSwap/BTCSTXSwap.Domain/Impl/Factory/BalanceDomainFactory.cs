@@ -2,9 +2,7 @@
 using BTCSTXSwap.Domain.Impl.Models;
 using BTCSTXSwap.Domain.Interfaces.Core;
 using BTCSTXSwap.Domain.Interfaces.Factory;
-using BTCSTXSwap.Domain.Interfaces.Factory.Goblins;
 using BTCSTXSwap.Domain.Interfaces.Models;
-using BTCSTXSwap.Domain.Interfaces.Models.Goblins;
 using System;
 using System.Collections.Generic;
 using System.Linq;

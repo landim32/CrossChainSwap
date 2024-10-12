@@ -1,8 +1,6 @@
 ﻿using Core.Domain;
 using BTCSTXSwap.Domain.Interfaces.Factory;
-using BTCSTXSwap.Domain.Interfaces.Factory.Goblins;
 using BTCSTXSwap.Domain.Interfaces.Models;
-using BTCSTXSwap.Domain.Interfaces.Models.Goblins;
 using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO.User;
 using System;

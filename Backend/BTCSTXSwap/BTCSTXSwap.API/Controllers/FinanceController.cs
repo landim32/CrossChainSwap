@@ -3,7 +3,6 @@ using BTCSTXSwap.API.DTO;
 using BTCSTXSwap.Domain.Impl.Models.Finance;
 using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO.Domain;
-using BTCSTXSwap.DTO.Items;
 using BTCSTXSwap.DTO.Finance;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

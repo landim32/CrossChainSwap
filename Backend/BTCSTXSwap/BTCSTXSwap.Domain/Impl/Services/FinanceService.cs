@@ -5,7 +5,6 @@ using Core.Domain.Withdraw;
 using BTCSTXSwap.Domain.Impl.Core;
 using BTCSTXSwap.Domain.Impl.Models.Finance;
 using BTCSTXSwap.Domain.Interfaces.Core;
-using BTCSTXSwap.Domain.Interfaces.Factory.Gobox;
 using BTCSTXSwap.Domain.Interfaces.Factory.Withdraw;
 using BTCSTXSwap.Domain.Interfaces.Models.WithDraw;
 using BTCSTXSwap.Domain.Interfaces.Services;
@@ -31,7 +30,6 @@ namespace BTCSTXSwap.Domain.Impl.Services
         private readonly IFinanceDomainFactory _financeFactory;
         private readonly IConfiguration _configuration;
         private readonly IConfigurationService _configurationService;
-        private readonly IGoboxDomainFactory _goboxFactory;
         private readonly IUnitOfWork _unitOfWork;
 
         private const int GOBI_WITHDRAWAL_MIN = 40;
@@ -56,7 +54,6 @@ namespace BTCSTXSwap.Domain.Impl.Services
             IFinanceDomainFactory withdrawTokenFactory,
             IConfiguration configuration,
             IConfigurationService configurationService,
-            IGoboxDomainFactory goboxFactory,
             IUnitOfWork unitOfWork
         )
         {
@@ -68,7 +65,6 @@ namespace BTCSTXSwap.Domain.Impl.Services
             _financeFactory = withdrawTokenFactory;
             _configuration = configuration;
             _configurationService = configurationService;
-            _goboxFactory = goboxFactory;
             _unitOfWork = unitOfWork;
         }
 
@@ -107,11 +103,13 @@ namespace BTCSTXSwap.Domain.Impl.Services
             var md = _financeFactory.BuildFinanceModel();
             if(md.GetTotalCredit(idUser) > 400)
             {
+                /*
                 var mdGobox = _goboxFactory.BuildGoboxModel();
                 if (mdGobox.CheckBuyGoblinBox(idUser) && mdGobox.CheckOpenedGoblinBox(idUser))
                 {
                     md.ActiveWithdrawal(idUser);
                 }
+                */
             }
             
         }

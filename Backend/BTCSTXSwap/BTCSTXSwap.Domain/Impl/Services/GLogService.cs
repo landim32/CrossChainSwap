@@ -4,7 +4,6 @@ using BTCSTXSwap.Domain.Impl.Core;
 using BTCSTXSwap.Domain.Interfaces.Core;
 using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Factory.GLog;
-using BTCSTXSwap.Domain.Interfaces.Factory.Goblins;
 using BTCSTXSwap.Domain.Interfaces.Models.GLog;
 using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO.GLog;
@@ -23,25 +22,19 @@ namespace BTCSTXSwap.Domain.Impl.Services
         private readonly ILogCore _log;
         private readonly IConfiguration _configuration;
         private readonly IGLogDomainFactory _logFactory;
-        private readonly IGoblinDomainFactory _goblinFactory;
         private readonly IUserDomainFactory _userFactory;
-        private readonly IUserItemDomainFactory _userItemDomainFactory;
 
         public GLogService(
             ILogCore log,
             IConfiguration configuration,
             IGLogDomainFactory logFactory,
-            IGoblinDomainFactory goblinFactory,
-            IUserDomainFactory userFactory,
-            IUserItemDomainFactory userItemDomainFactory
+            IUserDomainFactory userFactory
         )
         {
             _log = log;
             _configuration = configuration;
             _logFactory = logFactory;
-            _goblinFactory = goblinFactory;
             _userFactory = userFactory;
-            _userItemDomainFactory = userItemDomainFactory;
         }
 
         public void AddLog(long idUser, string msg, LogType logType, string Ip = "")
@@ -83,6 +76,7 @@ namespace BTCSTXSwap.Domain.Impl.Services
                 long idGoblin = 0;
                 if (long.TryParse(idStr, out idGoblin))
                 {
+                    /*
                     var goblin = _goblinFactory.BuildGoblinModel().GetById(idGoblin);
                     if (goblin != null)
                     {
@@ -91,6 +85,7 @@ namespace BTCSTXSwap.Domain.Impl.Services
                     else {
                         return msg.Replace(chave, "Unknown #" + idGoblin.ToString());
                     }
+                    */
                 }
             }
             return msg;
@@ -170,6 +165,7 @@ namespace BTCSTXSwap.Domain.Impl.Services
                 long itemKey = 0;
                 if (long.TryParse(idStr, out itemKey))
                 {
+                    /*
                     var usrMd = _userItemDomainFactory.BuildUserItemModel();
                     usrMd.ItemKey = itemKey;
                     try
@@ -182,7 +178,7 @@ namespace BTCSTXSwap.Domain.Impl.Services
                     {
                         return msg;
                     }
-                    
+                    */
                 }
             }
             return msg;

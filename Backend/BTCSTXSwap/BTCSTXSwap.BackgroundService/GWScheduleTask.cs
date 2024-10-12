@@ -8,15 +8,11 @@ namespace BTCSTXSwap.BackgroundService
 {
     public class GWScheduleTask
     {
-        private IGoblinService _goblinService;
         private IUserService _userService;
-        private IMiningService _miningService;
         private IConfigurationService _configurationService;
 
-        public GWScheduleTask(IGoblinService goblinService, IMiningService miningService, IUserService userService, IConfigurationService configurationService)
+        public GWScheduleTask(IUserService userService, IConfigurationService configurationService)
         {
-            _goblinService = goblinService;
-            _miningService = miningService;
             _userService = userService;
             _configurationService = configurationService;
         }
@@ -94,7 +90,7 @@ namespace BTCSTXSwap.BackgroundService
                 }
                 */
                 Console.WriteLine("Executando procedure de mining");
-                _miningService.RefreshMining();
+                //_miningService.RefreshMining();
                 Console.WriteLine("Procedure executada com sucesso");
                 Console.WriteLine("A mineração de " + users.Count() + " usuários finalizada com sucesso.");
             } catch(Exception e)

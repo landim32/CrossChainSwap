@@ -6,7 +6,6 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Models;
 using Auth.Domain.Interfaces.Services;
-using BTCSTXSwap.Domain.Impl.Models.Races;
 using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Models;
 using BTCSTXSwap.Domain.Interfaces.Services;
@@ -17,16 +16,12 @@ namespace BTCSTXSwap.Web.Data
 {
     public class GoblinService
     {
-        private IGoblinService _goblinService;
         private IUserService _userService;
-        private IMiningService _miningService;
         
 
-        public GoblinService(IGoblinService goblinService, IUserService userService, IMiningService miningService)
+        public GoblinService(IUserService userService)
         {
-            _goblinService = goblinService;
             _userService = userService;
-            _miningService = miningService;
         }
 
         public async Task<Boolean> RebuildGoblins()

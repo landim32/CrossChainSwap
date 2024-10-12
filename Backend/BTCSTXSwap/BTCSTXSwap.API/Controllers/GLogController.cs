@@ -1,11 +1,8 @@
 ﻿using Auth.Domain.Interfaces.Services;
 using BTCSTXSwap.API.DTO;
-using BTCSTXSwap.Domain.Interfaces.Models.Auctions;
 using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO.Domain;
 using BTCSTXSwap.DTO.GLog;
-using BTCSTXSwap.DTO.Goblin;
-using BTCSTXSwap.DTO.Mining;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,13 +17,11 @@ namespace BTCSTXSwap.API.Controllers
     {
         private IUserService _userService;
         private IGLogService _glogService;
-        private IGoblinService _goblinService;
 
-        public GLogController(IUserService userService, IGLogService glogService, IGoblinService goblinService)
+        public GLogController(IUserService userService, IGLogService glogService)
         {
             _userService = userService;
             _glogService = glogService;
-            _goblinService = goblinService;
         }
 
         [HttpGet("list")]
