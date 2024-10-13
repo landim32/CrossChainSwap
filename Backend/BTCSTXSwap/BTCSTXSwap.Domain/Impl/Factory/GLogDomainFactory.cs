@@ -16,22 +16,22 @@ namespace BTCSTXSwap.Domain.Impl.Factory
     {
         private readonly ILogCore _log;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IGLogRepository<IGLogModel, IGLogDomainFactory> _repLog;
+        //private readonly IGLogRepository<IGLogModel, IGLogDomainFactory> _repLog;
 
         public GLogDomainFactory(
             ILogCore log,
-            IUnitOfWork unitOfWork,
-            IGLogRepository<IGLogModel, IGLogDomainFactory> repLog
+            IUnitOfWork unitOfWork
+            //IGLogRepository<IGLogModel, IGLogDomainFactory> repLog
         )
         {
             _log = log;
             _unitOfWork = unitOfWork;
-            _repLog = repLog;
+            //_repLog = repLog;
         }
 
         public IGLogModel BuildGLogModel()
         {
-            return new GLogModel(_log, _unitOfWork, this, _repLog);
+            return new GLogModel(_log, _unitOfWork, this);
         }
     }
 }

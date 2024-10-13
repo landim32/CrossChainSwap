@@ -19,34 +19,20 @@ namespace Auth.Domain.Impl.Models
         }
 
         public long Id { get; set; }
-        public long IdReferral { get; set; }
-        public string ReferralCode { get; set; }
-        public string PublicAddress { get; set; }
         public string Hash { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        //public decimal Gobi { get; set; }
-        public int GobBlocked { get; set; }
-        public DateTime? GobBlockedDate { get; set; }
-        public DateTime? GobLastClaim { get; set; }
-        public int Gwb { get; set; }
-        public DateTime? GwdLastClaim { get; set; }
-        public DateTime? GoldLastClaim { get; set; }
-        public StatusEnum Status { get; set; }
-
-        public long GetIdUserByReferralCode(string refCode)
-        {
-            return _repositoryUser.GetIdUserByReferralCode(refCode);
-        }
+        public string BtcAddress { get; set; }
+        public string StxAddress { get; set; }
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
 
         public IUserModel GetById(long userId, IUserDomainFactory factory)
         {
             return _repositoryUser.GetById(userId, factory);
         }
 
-        public IUserModel GetUser(string publicAddress, IUserDomainFactory factory, string fromReferralCode = null)
+        public IUserModel GetUser(string btcAddress, string StxAddress, IUserDomainFactory factory)
         {
-            return _repositoryUser.GetOrCreateByAddress(publicAddress, factory, fromReferralCode);
+            return _repositoryUser.GetOrCreateByAddress(btcAddress, StxAddress, factory);
         }
 
 

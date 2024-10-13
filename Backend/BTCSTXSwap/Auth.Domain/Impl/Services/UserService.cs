@@ -25,23 +25,13 @@ namespace Auth.Domain.Impl.Services
             try
             {
                 var model = _userFactory.BuildUserModel();
-                model.PublicAddress = user.PublicAddress;
-                model.Email = user.Email;
-                model.Name = user.Name;
+                model.BtcAddress = user.BtcAddress;
+                model.StxAddress = user.StxAddress;
+                model.CreateAt = DateTime.Now;
+                model.UpdateAt = DateTime.Now;
                 model.Hash = GetUniqueToken();
-                model.Status = Models.StatusEnum.Active;
-
-                if (!string.IsNullOrEmpty(user.FromReferralCode)) {
-                    model.IdReferral = model.GetIdUserByReferralCode(user.FromReferralCode);
-                }
 
                 model.Save();
-
-                if(String.IsNullOrEmpty(user.Name))
-                {
-                    model.Name = "Goblin Master " + model.Id;
-                    model.Update();
-                }
 
                 return model;
             }
@@ -55,10 +45,10 @@ namespace Auth.Domain.Impl.Services
         {
             try
             {
-                var model = _userFactory.BuildUserModel().GetUser(user.PublicAddress, _userFactory);
-                model.PublicAddress = user.PublicAddress;
-                model.Email = user.Email;
-                model.Name = user.Name;
+                var model = _userFactory.BuildUserModel().GetUser(user.BtcAddress, user.StxAddress, _userFactory);
+                model.BtcAddress = user.BtcAddress;
+                model.StxAddress = user.StxAddress;
+                model.UpdateAt = DateTime.Now;
                 model.Update();
                 return model;
             }
@@ -68,11 +58,11 @@ namespace Auth.Domain.Impl.Services
             }
         }
 
-        public IUserModel GetUser(string publicAddress)
+        public IUserModel GetUser(string btcAddress, string stxAddress)
         {
             try
             {
-                return _userFactory.BuildUserModel().GetUser(publicAddress, _userFactory);
+                return _userFactory.BuildUserModel().GetUser(btcAddress, stxAddress, _userFactory);
             }
             catch (Exception)
             {
@@ -92,23 +82,13 @@ namespace Auth.Domain.Impl.Services
             }
         }
 
-        public IUserModel GetUserHash(string publicAddress, string fromReferralCode = null)
+        public IUserModel GetUserHash(string btcAddress, string stxAddress)
         {
             try
             {
-                var user = _userFactory.BuildUserModel().GetUser(publicAddress, _userFactory, fromReferralCode);
+                var user = _userFactory.BuildUserModel().GetUser(btcAddress, stxAddress, _userFactory);
                 if (user != null)
                 {
-                    /*
-                    var newUser = _userFactory.BuildUserModel();
-                    newUser.PublicAddress = user.PublicAddress;
-                    newUser.Id = user.Id;
-                    newUser.Hash = GetUniqueToken();
-                    newUser.Name = user.Name;
-                    newUser.Email = user.Email;
-                    newUser.Gobi = user.Gobi;
-                    return newUser.Update();
-                    */
                     user.Hash = GetUniqueToken();
                     return user.Update();
                 } 

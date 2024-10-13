@@ -12,21 +12,21 @@ namespace DB.Infra.Repository
     public class UserRepository : IUserRepository<IUserModel, IUserDomainFactory>
     {
 
-        private GoblinWarsContext _goblinContext;
+        private CrossChainSwapContext _ccsContext;
 
-        public UserRepository(GoblinWarsContext goblinContext)
+        public UserRepository(CrossChainSwapContext ccsContext)
         {
-            _goblinContext = goblinContext;
+            _ccsContext = ccsContext;
         }
 
         public IUserModel GetById(long userId, IUserDomainFactory factory)
         {
             try
             {
-                var row = _goblinContext.Users.Find(userId);
+                var row = _ccsContext.Users.Find(userId);
                 if (row == null)
                     return null;
-                return this.LoadUser(row.PublicAddress, factory);
+                return this.LoadUser(row.BtcAddress, factory);
             }
             catch (Exception)
             {
@@ -36,48 +36,30 @@ namespace DB.Infra.Repository
         private IUserModel DbToModel(IUserDomainFactory factory, User u)
         {
             var md = factory.BuildUserModel();
-            md.Id = u.Id;
-            md.IdReferral = u.IdReferral.GetValueOrDefault();
-            md.ReferralCode = u.ReferralCode;
-            md.PublicAddress = u.PublicAddress;
+            md.Id = u.UserId;
             md.Hash = u.Hash;
-            md.Name = u.Name;
-            md.Email = u.Email;
-            md.GobBlocked = u.Gobblocked;
-            md.GobBlockedDate = u.GobblockedDate;
-            md.GobLastClaim = u.GoblastClaim;
-            md.Gwb = u.Gwb;
-            md.GwdLastClaim = u.GwdlastClaim;
-            md.GoldLastClaim = u.GoldLastClaim;
-            md.Status = (StatusEnum) u.Status;
+            md.BtcAddress = u.BtcAddress;
+            md.StxAddress = u.StxAddress;
+            md.CreateAt = u.CreateAt;
+            md.UpdateAt = u.UpdateAt;
             return md;
         }
 
         private void ModelToDb(IUserModel u, User md)
         {
-            if (u.IdReferral > 0)
-            {
-                md.IdReferral = u.IdReferral;
-            }
-            md.ReferralCode = u.ReferralCode;
-            md.PublicAddress = u.PublicAddress;
+            md.UserId = u.Id;
             md.Hash = u.Hash;
-            md.Name = u.Name;
-            md.Email = u.Email;
-            md.Gobblocked = u.GobBlocked;
-            md.GobblockedDate = u.GobBlockedDate;
-            md.GoblastClaim = u.GobLastClaim;
-            md.Gwb = u.Gwb;
-            md.GwdlastClaim = u.GwdLastClaim;
-            md.GoldLastClaim = u.GoldLastClaim;
-            md.Status = (int)u.Status;
+            md.BtcAddress = u.BtcAddress;
+            md.StxAddress = u.StxAddress;
+            md.CreateAt = u.CreateAt;
+            md.UpdateAt = u.UpdateAt;
         }
 
-        public IUserModel LoadUser(string publicAddress, IUserDomainFactory factory)
+        public IUserModel LoadUser(string btcAddress, IUserDomainFactory factory)
         {
             try
             {
-                var row = _goblinContext.Users.Where(x => x.PublicAddress == publicAddress).FirstOrDefault();
+                var row = _ccsContext.Users.Where(x => x.BtcAddress == btcAddress).FirstOrDefault();
                 if(row != null)
                 {
                     return DbToModel(factory, row);
@@ -97,14 +79,16 @@ namespace DB.Infra.Repository
                 var u = new User();
                 ModelToDb(model, u);
 
-                if (_goblinContext.Users.Where(x => x.Name == u.Name).Count() > 0)
+                /*
+                if (_ccsContext.Users.Where(x => x.Name == u.Name).Count() > 0)
                     throw new Exception("Name already exists. Choose a new one.");
                 if (_goblinContext.Users.Where(x => x.Email == u.Email).Count() > 0)
                     throw new Exception("Email already exists. Choose a new one.");
+                */
 
-                _goblinContext.Add(u);
-                _goblinContext.SaveChanges();
-                model.Id = u.Id;
+                _ccsContext.Add(u);
+                _ccsContext.SaveChanges();
+                model.Id = u.UserId;
                 return model;
             }
             catch (Exception)
@@ -117,10 +101,10 @@ namespace DB.Infra.Repository
         {
             try
             {
-                var row = _goblinContext.Users.Where(x => x.PublicAddress == model.PublicAddress).FirstOrDefault();
+                var row = _ccsContext.Users.Where(x => x.BtcAddress == model.BtcAddress).FirstOrDefault();
                 ModelToDb(model, row);
-                _goblinContext.Users.Update(row);
-                _goblinContext.SaveChanges();
+                _ccsContext.Users.Update(row);
+                _ccsContext.SaveChanges();
                 return model;
             }
             catch (Exception)
@@ -129,48 +113,36 @@ namespace DB.Infra.Repository
             }
         }
 
-        public IUserModel GetOrCreateByAddress(string publicAddress, IUserDomainFactory factory, string fromReferralCode = null)
+        public IUserModel GetOrCreateByAddress(string btcAddress, string stxAddress, IUserDomainFactory factory)
         {
             try
             {
-                var retUser = LoadUser(publicAddress, factory);
+                var retUser = LoadUser(btcAddress, factory);
                 if(retUser == null)
                 {
                     retUser = factory.BuildUserModel();
-                    retUser.PublicAddress = publicAddress;
-                    if (!string.IsNullOrEmpty(fromReferralCode))
-                    {
-                        retUser.IdReferral = retUser.GetIdUserByReferralCode(fromReferralCode);
-                    }
+                    retUser.BtcAddress = btcAddress;
+                    retUser.StxAddress = stxAddress;
+                    retUser.CreateAt = DateTime.Now;
+                    retUser.UpdateAt = DateTime.Now;
                     var u = new User();
                     ModelToDb(retUser, u);
-                    _goblinContext.Add(u);
-                    _goblinContext.SaveChanges();
-                    retUser.Id = u.Id;
-                    retUser.Name = "Goblin Master " + retUser.Id;
-                    retUser = UpdateUser(retUser);
-                }
-                else if(!String.IsNullOrEmpty(fromReferralCode))
-                {
-                    retUser.IdReferral = retUser.GetIdUserByReferralCode(fromReferralCode);
+                    _ccsContext.Add(u);
+                    _ccsContext.SaveChanges();
+                    retUser.Id = u.UserId;
                     retUser = UpdateUser(retUser);
                 }
                 return retUser;
             }
             catch (Exception err)
             {
-                throw;
+                throw err.InnerException;
             }
-        }
-
-        public long GetIdUserByReferralCode(string refCode)
-        {
-            return _goblinContext.Users.Where(x => x.ReferralCode == refCode).Select(x => x.Id).FirstOrDefault();
         }
 
         public IEnumerable<IUserModel> ListUsers(IUserDomainFactory factory)
         {
-            var rows = _goblinContext.Users.ToList();
+            var rows = _ccsContext.Users.ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
     }

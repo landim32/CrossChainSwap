@@ -109,10 +109,11 @@ namespace BTCSTXSwap.Domain.Impl.Services
                     var user = _userFactory.BuildUserModel().GetById(idUser, _userFactory);
                     if (user != null)
                     {
-                        string publicAddr = user.PublicAddress;
+                        string publicAddr = user.BtcAddress;
                         publicAddr = publicAddr.Substring(0, 6) + "..." + publicAddr.Substring(publicAddr.Length - 4);
 
-                        return msg.Replace(chave, string.Format("{0} ({1})", user.Name, publicAddr));
+                        //return msg.Replace(chave, string.Format("{0} ({1})", user.Name, publicAddr));
+                        return msg.Replace(chave, string.Format("{0} ({1})", user.BtcAddress, publicAddr));
                     }
                     else
                     {

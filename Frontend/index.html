@@ -21,11 +21,11 @@
                 </div>
                 <div class="modal-body">
                     <p>You are about to make a conversion of <strong class="modalOrigCoin">0.0345 BTC</strong> into <strong class="modalDestCoin">3,453 STX</strong>.</p>
-                    <p><strong class="modalOrigCoin">0.0345 BTC</strong> -> <span class="modalOrigAddr">tb1qeeqfngu5tnqfkxh3e0rdkj6m2ng2vqsr86lskq</span></p>
+                    <p><strong class="modalOrigCoin">0.0345 BTC</strong> -> <span class="modalOrigAddr">tb1qeeqfngu5tnqfkxh3e0rdkj6m2ng2vqsr86lskq</span> (Pool Address)</p>
                     <p>As soon as the BTC transaction reaches <strong>3 confirmations</strong> the transfer of
                         <strong class="modalDestCoin">3,453 STX</strong> will be initiated to the address provided by your Leather Wallet:
                     </p>
-                    <p><strong class="modalDestCoin">3,453 STX</strong> -> <span class="modalDestAddr">ST2JC8HK79X5QZW8ZXVA0Q6V1ZKAA3Q4VHZP29QAP</span></p>
+                    <p><strong class="modalDestCoin">3,453 STX</strong> -> <span class="modalDestAddr">ST2JC8HK79X5QZW8ZXVA0Q6V1ZKAA3Q4VHZP29QAP</span> (Your Wallet Address)</p>
                     <p>A fee of <strong class=="modalFee">230 satoshis</strong> will be charged, please confirm if you agree.</p>
                     <p>Do you confirm this transaction?</p>
                 </div>
@@ -70,6 +70,8 @@
                         <input type="hidden" id="StxProportion" name="StxProportion" value="0">
                         <input type="hidden" id="BtcAddress" name="BtcAddress" value="">
                         <input type="hidden" id="StxAddress" name="StxAddress" value="">
+                        <input type="hidden" id="PoolBtcAddress" name="PoolBtcAddress" value="">
+                        <input type="hidden" id="PoolStxAddress" name="PoolStxAddress" value="">
                         <div class="row">
                             <h1 class="text-center" id="title" data-coin="bitcoin">
                                 BTC to STX
@@ -92,7 +94,7 @@
                                                     0.223423 BTC</label>
                                                 <input type="text"
                                                     class="numericInput form-control form-control-lg text-end"
-                                                    id="origAmount" value="0.00000000" placeholder="Enter amount"
+                                                    id="origAmount" value="0.00000" placeholder="Enter amount"
                                                     required>
                                             </div>
                                         </div>
@@ -131,7 +133,7 @@
                                                     100.000000 STX</label>
                                                 <input type="text"
                                                     class="numericInput form-control form-control-lg text-end"
-                                                    id="destAmount" value="0.00000000" placeholder="Enter amount"
+                                                    id="destAmount" value="0.00000" placeholder="Enter amount"
                                                     required>
                                             </div>
                                         </div>

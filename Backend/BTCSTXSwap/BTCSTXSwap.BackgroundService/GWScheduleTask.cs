@@ -9,17 +9,18 @@ namespace BTCSTXSwap.BackgroundService
     public class GWScheduleTask
     {
         private IUserService _userService;
-        private IConfigurationService _configurationService;
+        //private IConfigurationService _configurationService;
 
-        public GWScheduleTask(IUserService userService, IConfigurationService configurationService)
+        //public GWScheduleTask(IUserService userService, IConfigurationService configurationService)
+        public GWScheduleTask(IUserService userService)
         {
             _userService = userService;
-            _configurationService = configurationService;
+            //_configurationService = configurationService;
         }
 
         public void CalculateDaily()
         {
-            _configurationService.CalculateDaily();
+            //_configurationService.CalculateDaily();
         }
 
         public void DoMinning()

@@ -21,6 +21,9 @@ namespace Auth.Domain
         //private readonly ICryptoUtils _cryptoUtils;
         private readonly IUserService _userService;
 
+        private const string BTC_ADDRESS = "tb1qeeqfngu5tnqfkxh3e0rdkj6m2ng2vqsr86lskq";
+        private const string STX_ADDRESS = "ST2JC8HK79X5QZW8ZXVA0Q6V1ZKAA3Q4VHZP29QAP";
+
         public AuthHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
@@ -39,7 +42,8 @@ namespace Auth.Domain
             if (!Request.Headers.ContainsKey("Authorization"))
                 return AuthenticateResult.Fail("Missing Authorization Header");
 
-            string walletAddress = null;
+            string btcAddress = null;
+            string stxAddress = null;
             IUserModel user = null; 
             try
             {
@@ -47,22 +51,23 @@ namespace Auth.Domain
                 var masterKey = authHeader.Parameter;
                 if(masterKey == "masterkeydoamor")
                 {
-                    user = _userService.GetUser("0x051684129FC36a4CcBCE92cC0b4213a2704C441B");
+                    user = _userService.GetUser(BTC_ADDRESS, STX_ADDRESS);
                 }
                 else
                 {
                     var hashAuth = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter));
                     var hashList = hashAuth.Split("|separator|");
-                    if (hashList.Count() == 2)
+                    if (hashList.Count() == 3)
                     {
                         var signature = hashList[0];
-                        walletAddress = hashList[1];
+                        btcAddress = hashList[1];
+                        stxAddress = hashList[2];
 
-                        user = _userService.GetUser(walletAddress);
+                        user = _userService.GetUser(btcAddress, stxAddress);
                         if (user == null)
                             return AuthenticateResult.Fail("Invalid Session");
                         /*
-                        if (!_cryptoUtils.CheckPersonalSignature(user.Hash, signature, walletAddress))
+                        if (!_cryptoUtils.CheckPersonalSignature(user.Hash, signature, btcAddress))
                         {
                             return AuthenticateResult.Fail("Invalid Session");
                         }
@@ -82,9 +87,10 @@ namespace Auth.Domain
             
             var claims = new[] {
                 new Claim("UserInfo",  JsonConvert.SerializeObject(new UserInfo() {
-                     PublicAddress = user.PublicAddress,
                      Id = user.Id,
-                     Hash = user.Hash
+                     Hash = user.Hash,
+                     BtcAddress = user.BtcAddress,
+                     StxAddress = user.StxAddress
                 }))
             };
             var identity = new ClaimsIdentity(claims, Scheme.Name);

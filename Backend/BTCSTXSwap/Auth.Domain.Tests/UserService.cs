@@ -9,7 +9,7 @@ namespace Auth.Domain.Tests
 {
     public class UserService
     {
-        private const string _publicAddress = "0x17862312jhaghdbsSFWS";
+        private const string _btcAddress = "0x17862312jhaghdbsSFWS";
         private const int _userId = 15;
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Auth.Domain.Tests
             // Act:
             IUserModel modelReturn = userService.CreateNewUser(new UserInfo
             {
-                PublicAddress = _publicAddress
+                BtcAddress = _btcAddress
             });
 
             Assert.Equal(modelReturn.Id, _userId);

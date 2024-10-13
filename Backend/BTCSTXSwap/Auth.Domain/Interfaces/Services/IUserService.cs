@@ -10,10 +10,10 @@ namespace Auth.Domain.Interfaces.Services
     {
         IUserModel CreateNewUser(UserInfo user);
         IUserModel UpdateUser(UserInfo user);
-        IUserModel GetUser(string publicAddress);
+        IUserModel GetUser(string btcAddress, string stxAddress);
         IEnumerable<IUserModel> GetAllUserAddress();
         IUserModel GetUSerByID(long userId);
-        IUserModel GetUserHash(string publicAddress, string fromReferralCode = null);
+        IUserModel GetUserHash(string btcAddress, string stxAddress);
         UserInfo GetUserInSession(HttpContext httpContext);
 
     }

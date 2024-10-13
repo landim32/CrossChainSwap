@@ -1,10 +1,42 @@
-(function(){
+function doError(msg) {
+    $("#errorBox span").text(msg);
+    $("#errorBox").show();
+    $("#openModalBtn").prop("disabled", true);
+}
 
-    function doError(msg) {
-        $("#errorBox span").text(msg);
-        $("#errorBox").show();
-        //$("#openModalBtn").prop("disabled", true);
-    }
+function loadPrice() {
+    $.getJSON( "https://localhost:44374/api/CoinMarketCap/getcurrentprice", function( data ) {
+        //alert(JSON.stringify(data));
+        $("p.description").data("bitcoin", data.btcToStxText);
+        $("p.description").data("stacks", data.stxToBtcText);
+        $("p.description").text(($("#title").data("coin") == "bitcoin") ? 
+            $("p.description").data("bitcoin") : 
+            $("p.description").data("stacks")
+        );
+        $("#BtcProportion").val(data.btcProportion);
+        $("#StxProportion").val(data.stxProportion);
+
+        $("#openModalBtn").prop("disabled", false);
+    }).fail(function() {
+        doError("Cannot get coins price from CoinMarketCap.");
+    });
+}
+
+function loadPoolInfo() {
+    $.getJSON( "https://localhost:44374/api/Pool/getpoolinfo", function( data ) {
+        //alert(JSON.stringify(data));
+        //alert(data.btcAddress);
+        $("#PoolBtcAddress").val(data.btcAddress);
+
+        loadPrice();
+    
+        //$("#openModalBtn").prop("disabled", false);
+    }).fail(function() {
+        doError("Cannot get pool information.");
+    });
+}
+
+(function(){
 
     /*
     function accountFromDerivationPath(path) {
@@ -19,10 +51,10 @@
     $("#openModalBtn").prop("disabled", false);
 
     $('input.numericInput').inputNumberFormat({
-        'decimal': 8,
-        'decimalAuto': 8,
+        'decimal': 5,
+        'decimalAuto': 5,
         'separator': '.',
-        'separatorAuthorized': ['.', ','],
+        'separatorAuthorized': ['.'], //['.', ','],
         allowNegative: false
       });
       $('input.numericInput').on("input", function (e) {
@@ -31,11 +63,11 @@
         let stxP = parseFloat($("#StxProportion").val());
         if ($("#title").data("coin") == "bitcoin") {
             let price = btcP * amount;
-            $("#destAmount").val(price.toFixed(8));
+            $("#destAmount").val(price.toFixed(5));
         }
         else {
             let price = stxP * amount;
-            $("#destAmount").val(price.toFixed(8));
+            $("#destAmount").val(price.toFixed(5));
         }
       });
     $("#changeBtn").on("click", function (e) {
@@ -91,10 +123,15 @@
     $("#openModalBtn").on("click", function (e) {
         e.preventDefault();
 
-        $(".modalOrigCoin").text($("#origAmount").val() + " BTC");
+        let vOrigAmout = parseFloat($("#origAmount").val());
+        vOrigAmout = Math.round(vOrigAmout * 100000) / 100000;
+        $(".modalOrigCoin").text(vOrigAmout + " BTC");
+
+        let vDestAmout = parseFloat($("#destAmount").val());
+        vDestAmout = Math.round(vDestAmout * 100000) / 100000;
         $(".modalDestCoin").text($("#destAmount").val() + " STX");
 
-        $(".modalOrigAddr").text($("#btcAddress").val());
+        $(".modalOrigAddr").text($("#PoolBtcAddress").val());
         $(".modalDestAddr").text($("#stxAddress").val());
 
         $("#swapModal").modal("show");
@@ -109,21 +146,6 @@
         $("#title").data("coin", ($(this).val() == "bitcoin") ? "bitcoin" : "stacks");
         $("#changeBtn").trigger("click");
     });
-    $.getJSON( "https://localhost:44374/api/CoinMarketCap/getcurrentprice", function( data ) {
-        //alert(JSON.stringify(data));
-        $("p.description").data("bitcoin", data.btcToStxText);
-        $("p.description").data("stacks", data.stxToBtcText);
-        $("p.description").text(($("#title").data("coin") == "bitcoin") ? 
-            $("p.description").data("bitcoin") : 
-            $("p.description").data("stacks")
-        );
-        $("#BtcProportion").val(data.btcProportion);
-        $("#StxProportion").val(data.stxProportion);
-
-        $("#openModalBtn").prop("disabled", false);
-    }).fail(function() {
-        doError("Cannot get coins price from CoinMarketCap.");
-    });
     $("#confirmBtn").on("click", function (e) {
         e.preventDefault();
 
@@ -133,48 +155,26 @@
             window.LeatherProvider.request("sendTransfer", {
               recipients: [
                 {
-                  address: "tb1qkzvk9hr7uvas23hspvsgqfvyc8h4nngeqjqtnj",
+                  address: $("#PoolBtcAddress").val(),
                   amount: amountOrig,
                 }
               ],
               network: "testnet",
             }).then(function (response) {
-                $("#btcAddress").val()
+                alert(response.result.txid);
+                console.log("Transaction ID:", response.result.txid);
+                //$("#btcAddress").val()
             });
           
-            console.log("Response:", response);
-            console.log("Transaction ID:", response.result.txid);
+            //console.log("Response:", response);
+            //console.log("Transaction ID:", response.result.txid);
           } catch (error) {
-            console.log("Request error:", error.error.code, error.error.message);
+            doError("Request error: " + error.error.message + "(" + error.error.code + ")");
           }
     });
 
-    /*
-    function accountFromDerivationPath(path: string) {
-        console.log(path);
-        const segments = path.split("/");
-        const account = parseInt(segments[3].replaceAll("'", ""), 10);
-        if (isNaN(account)) throw new Error("Cannot parse account number from path");
-        return account;
-      }
-      
-      document.querySelector(".btn")?.addEventListener("click", async () => {
-        if (!window.LeatherProvider) {
-          alert(
-            "LeatherProvider not found. Install the Leather extension from leather.io/install."
-          );
-          return;
-        }
-      
-        const response = await window.LeatherProvider?.request("getAddresses");
-      
-        console.log("Response:", response);
-        console.log(
-          "Account:",
-          accountFromDerivationPath(response.result.addresses[0].derivationPath)
-        );
-      });
-      */
+    //loadPrice();
+    loadPoolInfo();
       
 
  })(jQuery)

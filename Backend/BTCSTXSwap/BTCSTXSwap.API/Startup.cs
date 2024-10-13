@@ -31,7 +31,7 @@ namespace BTCSTXSwap.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Initializer.Configure(services, Configuration.GetConnectionString("GoblinWarsContext"));
+            Initializer.Configure(services, Configuration.GetConnectionString("CrossChainSwapContext"));
             services.AddControllers();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>

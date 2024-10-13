@@ -9,10 +9,10 @@ namespace DB.Infra
     public class UnitOfWork : IUnitOfWork
     {
 
-        private readonly GoblinWarsContext _goblinContext;
+        private readonly CrossChainSwapContext _goblinContext;
         private readonly ILogCore _log;
 
-        public UnitOfWork(ILogCore log, GoblinWarsContext goblinContext)
+        public UnitOfWork(ILogCore log, CrossChainSwapContext goblinContext)
         {
             this._goblinContext = goblinContext;
             _log = log;
