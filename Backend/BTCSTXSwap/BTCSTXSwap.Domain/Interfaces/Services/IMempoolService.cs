@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace BTCSTXSwap.Domain.Interfaces.Services
 {
-    public interface IBitcoinService
+    public interface IMempoolService
     {
-        string GetPoolAddress();
-        void RegisterTx(string txid);
+        Task<long> GetBalance(string address);
+        Task<RecommendedFeeInfo> GetRecommededFee();
+        Task<TxInfo> GetTransaction(string txid);
     }
 }

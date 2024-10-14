@@ -13,5 +13,8 @@ namespace BTCSTXSwap.Domain.Interfaces.Services
         ITransactionModel GetTx(long txId);
         ITransactionModel CreateTx(TransactionParamInfo param);
         ITransactionModel Update(TransactionInfo tx);
+        IEnumerable<ITransactionModel> ListByStatusActive();
+
+        Task<bool> ProcessTransaction(ITransactionModel tx);
     }
 }

@@ -62,7 +62,8 @@ function loadPoolInfo() {
         //alert(JSON.stringify(data));
         //alert(data.btcAddress);
         $("#PoolBtcAddress").val(data.btcAddress);
-
+        let poolBalance = parseInt(data.btcBalance) / 100000000;
+        $("#poolBalance").text("Pool Balance " + poolBalance + " BTC");
         loadPrice();
     
         //$("#openModalBtn").prop("disabled", false);

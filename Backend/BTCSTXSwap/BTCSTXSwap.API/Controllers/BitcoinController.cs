@@ -14,11 +14,13 @@ namespace BTCSTXSwap.API.Controllers
     {
         private IUserService _userService;
         private IBitcoinService _bitcoinService;
+        private IMempoolService _mempoolService;
 
-        public BitcoinController(IUserService userService, IBitcoinService bitcoinService)
+        public BitcoinController(IUserService userService, IBitcoinService bitcoinService, IMempoolService mempoolService)
         {
             _userService = userService;
             _bitcoinService = bitcoinService;
+            _mempoolService = mempoolService;
         }
 
         [HttpGet("getaddress")]
@@ -53,7 +55,7 @@ namespace BTCSTXSwap.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
                 */
-                return await _bitcoinService.GetBalance(_bitcoinService.GetPoolAddress());
+                return await _mempoolService.GetBalance(_bitcoinService.GetPoolAddress());
             }
             catch (Exception ex)
             {

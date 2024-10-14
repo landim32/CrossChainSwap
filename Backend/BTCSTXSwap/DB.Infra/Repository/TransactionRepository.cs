@@ -90,9 +90,15 @@ namespace DB.Infra.Repository
             }
         }
 
-        public IEnumerable<ITransactionModel> ListTxByBtcAddr(ITransactionDomainFactory factory)
+        public IEnumerable<ITransactionModel> ListByBtcAddr(string btcAddr, ITransactionDomainFactory factory)
         {
             var rows = _ccsContext.Transactions.ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
+        public IEnumerable<ITransactionModel> ListByStatus(IList<int> status, ITransactionDomainFactory factory)
+        {
+            var rows = _ccsContext.Transactions.Where(x => status.Contains(x.Status)).OrderBy(x => x.CreateAt).ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 

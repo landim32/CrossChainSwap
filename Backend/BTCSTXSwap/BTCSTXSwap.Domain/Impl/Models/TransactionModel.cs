@@ -46,9 +46,14 @@ namespace BTCSTXSwap.Domain.Impl.Models
             return _repositoryTx.GetById(txId, factory);
         }
 
-        public IEnumerable<ITransactionModel> ListTxByBtcAddr(ITransactionDomainFactory factory)
+        public IEnumerable<ITransactionModel> ListByBtcAddr(string btcAddr, ITransactionDomainFactory factory)
         {
-            return _repositoryTx.ListTxByBtcAddr(factory);
+            return _repositoryTx.ListByBtcAddr(btcAddr, factory);
+        }
+
+        public IEnumerable<ITransactionModel> ListByStatus(IList<int> status, ITransactionDomainFactory factory)
+        {
+            return _repositoryTx.ListByStatus(status, factory);
         }
 
         public ITransactionModel Save()

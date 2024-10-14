@@ -9,13 +9,15 @@ namespace BTCSTXSwap.DTO.Transaction
     public enum TransactionStatusEnum
     {
         Initialized = 1,
-        BtcNotConfirmed = 2,
-        StxNotConfirmed = 3,
-        BtcConfirmed = 4,
-        StxConfirmed = 5,
-        BtcConfirmedStxNotConfirmed = 4,
-        StxConfirmedBtcNotConfirmed = 5,
-        BtcConfirmedStxConfirmed = 6,
-        StxConfirmedBtcConfirmed = 7
+        Calculated = 2,
+        BtcNotConfirmed = 3,
+        StxNotConfirmed = 4,
+        BtcConfirmed = 5,
+        StxConfirmed = 6,
+        BtcConfirmedStxNotConfirmed = 7,
+        StxConfirmedBtcNotConfirmed = 8,
+        BtcConfirmedStxConfirmed = 9,
+        StxConfirmedBtcConfirmed = 10,
+        InvalidInformation = 11
     }
 }

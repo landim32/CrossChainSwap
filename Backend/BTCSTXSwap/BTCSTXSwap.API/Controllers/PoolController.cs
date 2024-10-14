@@ -15,11 +15,13 @@ namespace BTCSTXSwap.API.Controllers
     {
         private IUserService _userService;
         private IBitcoinService _bitcoinService;
+        private IMempoolService _mempoolService;
 
-        public PoolController(IUserService userService, IBitcoinService bitcoinService)
+        public PoolController(IUserService userService, IBitcoinService bitcoinService, IMempoolService mempoolService)
         {
             _userService = userService;
             _bitcoinService = bitcoinService;
+            _mempoolService = mempoolService;
         }
 
         [HttpGet("getpoolinfo")]
@@ -38,7 +40,7 @@ namespace BTCSTXSwap.API.Controllers
                 return new PoolInfo()
                 {
                     BtcAddress = poolAddr,
-                    BtcBalance = await _bitcoinService.GetBalance(poolAddr)
+                    BtcBalance = await _mempoolService.GetBalance(poolAddr)
                 };
             }
             catch (Exception ex)
