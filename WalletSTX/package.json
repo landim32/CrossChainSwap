@@ -1,0 +1,18 @@
+{
+  "name": "walletstx",
+  "version": "1.0.0",
+  "description": "Wallet STX to simple transfer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rodrigo Landim",
+  "license": "ISC",
+  "dependencies": {
+    "@stacks/network": "^6.16.0",
+    "@stacks/transactions": "^6.16.1",
+    "@stacks/wallet-sdk": "^6.16.1",
+    "bip39": "^3.1.0",
+    "express": "^4.21.1"
+  }
+}
