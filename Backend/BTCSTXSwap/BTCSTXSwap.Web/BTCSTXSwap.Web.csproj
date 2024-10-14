@@ -8,9 +8,6 @@
     <ProjectReference Include="..\BTCSTXSwap.Application\BTCSTXSwap.Application.csproj" />
     <ProjectReference Include="..\BTCSTXSwap.Domain\BTCSTXSwap.Domain.csproj" />
     <ProjectReference Include="..\BTCSTXSwap.DTO\BTCSTXSwap.DTO.csproj" />
-    <ProjectReference Include="..\Auth.Domain\Auth.Domain.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Remove="System.Drawing.Common" />

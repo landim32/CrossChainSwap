@@ -1,6 +1,4 @@
-﻿using Auth.Domain.Interfaces.Factory;
-using Auth.Domain.Interfaces.Services;
-using BTCSTXSwap.Domain.Impl.Core;
+﻿using BTCSTXSwap.Domain.Impl.Core;
 using BTCSTXSwap.Domain.Interfaces.Core;
 using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Factory.GLog;

@@ -1,5 +1,4 @@
-﻿using Auth.Domain.Interfaces.Services;
-using BTCSTXSwap.Domain.Interfaces.Services;
+﻿using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO.CoinMarketCap;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

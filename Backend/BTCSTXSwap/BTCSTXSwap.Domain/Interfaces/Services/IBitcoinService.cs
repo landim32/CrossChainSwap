@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BTCSTXSwap.DTO.Mempool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace BTCSTXSwap.Domain.Interfaces.Services
     {
         string GetPoolAddress();
         Task<long> GetBalance(string address);
+        Task<RecommendedFeeInfo> GetRecommededFee();
         void RegisterTx(string txid);
     }
 }

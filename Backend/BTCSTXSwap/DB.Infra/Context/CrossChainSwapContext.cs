@@ -17,6 +17,7 @@ namespace DB.Infra.Context
         {
         }
 
+        public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,6 +33,54 @@ namespace DB.Infra.Context
         {
             modelBuilder.HasAnnotation("Relational:Collation", "en_US.utf8");
 
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.HasKey(e => new { e.TxId, e.Type })
+                    .HasName("pk_transaction");
+
+                entity.ToTable("transactions");
+
+                entity.Property(e => e.TxId)
+                    .HasColumnName("tx_id")
+                    .HasDefaultValueSql("nextval('transactions_tx_nid_seq'::regclass)");
+
+                entity.Property(e => e.Type).HasColumnName("type");
+
+                entity.Property(e => e.BtcAddress)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .HasColumnName("btc_address");
+
+                entity.Property(e => e.BtcAmount).HasColumnName("btc_amount");
+
+                entity.Property(e => e.BtcFee).HasColumnName("btc_fee");
+
+                entity.Property(e => e.BtcTxid)
+                    .HasMaxLength(64)
+                    .HasColumnName("btc_txid")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.CreateAt).HasColumnName("create_at");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.StxAddress)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .HasColumnName("stx_address");
+
+                entity.Property(e => e.StxAmount).HasColumnName("stx_amount");
+
+                entity.Property(e => e.StxFee).HasColumnName("stx_fee");
+
+                entity.Property(e => e.StxTxid)
+                    .HasMaxLength(64)
+                    .HasColumnName("stx_txid")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.UpdateAt).HasColumnName("update_at");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
@@ -40,25 +89,24 @@ namespace DB.Infra.Context
 
                 entity.Property(e => e.BtcAddress)
                     .IsRequired()
-                    .HasMaxLength(40)
+                    .HasMaxLength(64)
                     .HasColumnName("btc_address");
 
                 entity.Property(e => e.CreateAt)
-                    .HasColumnType("date")
+                    .HasColumnType("timestamp with time zone")
                     .HasColumnName("create_at");
 
                 entity.Property(e => e.Hash)
-                    .IsRequired()
                     .HasMaxLength(64)
                     .HasColumnName("hash");
 
                 entity.Property(e => e.StxAddress)
                     .IsRequired()
-                    .HasMaxLength(40)
+                    .HasMaxLength(64)
                     .HasColumnName("stx_address");
 
                 entity.Property(e => e.UpdateAt)
-                    .HasColumnType("date")
+                    .HasColumnType("timestamp with time zone")
                     .HasColumnName("update_at");
             });
 

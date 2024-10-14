@@ -1,7 +1,7 @@
-﻿using BTCSTXSwap.API.DTO;
-using BTCSTXSwap.Domain.Interfaces.Services;
-using BTCSTXSwap.DTO.Domain;
-using BTCSTXSwap.DTO.GLog;
+﻿using BTCSTXSwap.Domain.Interfaces.Services;
+using BTCSTXSwap.DTO;
+using BTCSTXSwap.DTO.CoinMarketCap;
+using BTCSTXSwap.DTO.Transaction;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,34 +11,39 @@ namespace BTCSTXSwap.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class GLogController : Controller
+    //[Authorize]
+    public class TransactionController: Controller
     {
         private IUserService _userService;
-        private IGLogService _glogService;
+        private ITransactionService _txService;
 
-        public GLogController(IUserService userService, IGLogService glogService)
+        public TransactionController(IUserService userService, ITransactionService txService)
         {
             _userService = userService;
-            _glogService = glogService;
+            _txService = txService;
         }
 
-        [HttpGet("list")]
-        public ActionResult<GLogListResult> List(int page)
+        [HttpPut("createTx")]
+        public ActionResult<bool> CreateTx(TransactionParamInfo param)
         {
             try
             {
+                /*
                 var user = _userService.GetUserInSession(HttpContext);
                 if (user == null)
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return _glogService.List(user.Id, page);
+                */
+                var tx = _txService.CreateTx(param);
+                
+                return new ActionResult<bool>(tx.TxId > 0);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
+
     }
 }

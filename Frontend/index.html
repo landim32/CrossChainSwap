@@ -81,13 +81,14 @@
                             <div class="mb-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="row mb-3">
+                                        <div class="row">
                                             <div class="col-md-6">
-                                                <label for="amount" class="form-label">De</label>
+                                                <label for="amount" class="form-label">From</label>
                                                 <select id="origSelected" class="form-select form-select-lg">
                                                     <option selected value="bitcoin">Bitcoin</option>
                                                     <option value="stacks">Stacks</option>
                                                 </select>
+                                                <div id="origPrice" class="form-text text-end">Price: ~</div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="amount" class="form-label" style="float: right">Disponível
@@ -98,12 +99,12 @@
                                                     required>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <!--div class="row">
                                             <div class="col-md-6 offset-md-6">
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     style="float: right">Máx.</button>
                                             </div>
-                                        </div>
+                                        </div-->
                                     </div>
                                 </div>
                             </div>
@@ -122,11 +123,12 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label for="amount" class="form-label">De</label>
+                                                <label for="amount" class="form-label">To</label>
                                                 <select id="destSelected" class="form-select form-select-lg">
                                                     <option value="bitcoin">Bitcoin</option>
                                                     <option selected value="stacks">Stacks</option>
                                                 </select>
+                                                <div id="destPrice" class="form-text text-end">Price: ~</div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="amount" class="form-label" style="float: right">Estoque
@@ -146,9 +148,10 @@
                                 <p class="description text-center">1 STX = 0,003435 BTC</p>
                             </div>
                         </div>
-                        <div id="errorBox" class="alert alert-danger" style="display: none">
+                        <div id="errorBox" class="alert alert-danger alert-dismissible fade show" style="display: none;">
                             <i class="fa fa-warning"></i>
                             <span>An example danger alert with an icon</span>
+                            <button type="button" id="alertClose" class="btn-close" aria-label="Close"></button>
                         </div>
                         <div class="row">
                             <div class="d-grid gap-2">

@@ -4,8 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Auth.Domain.Interfaces.Models;
-using Auth.Domain.Interfaces.Services;
 using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Models;
 using BTCSTXSwap.Domain.Interfaces.Services;

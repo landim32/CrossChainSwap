@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Auth.Domain.Interfaces.Services;
 using BTCSTXSwap.Domain.Interfaces.Services;
 
 namespace BTCSTXSwap.BackgroundService

@@ -40,6 +40,19 @@ namespace BTCSTXSwap.Domain.Impl.Services
             }
         }
 
+        public async Task<RecommendedFeeInfo> GetRecommededFee()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string url = "https://mempool.space/testnet/api/v1/fees/recommended";
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<RecommendedFeeInfo>(responseBody);
+            }
+        }
+
         public void RegisterTx(string txid)
         {
             throw new NotImplementedException();

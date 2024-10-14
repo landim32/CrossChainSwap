@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Auth.Domain.Impl.Models;
-using Auth.Domain.Interfaces.Factory;
-using Auth.Domain.Interfaces.Models;
+using BTCSTXSwap.Domain.Interfaces.Factory;
+using BTCSTXSwap.Domain.Interfaces.Models;
 using Core.Domain.Repository;
 using DB.Infra.Context;
 
@@ -136,7 +135,7 @@ namespace DB.Infra.Repository
             }
             catch (Exception err)
             {
-                throw err.InnerException;
+                throw;
             }
         }
 

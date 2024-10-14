@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BTCSTXSwap.Web.Data;
 using BTCSTXSwap.Application;
-using Auth.Domain.Impl.Services;
 
 namespace BTCSTXSwap.Web
 {

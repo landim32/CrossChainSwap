@@ -1,10 +1,4 @@
-﻿using Auth.Domain;
-using Auth.Domain.Impl.Factory;
-using Auth.Domain.Impl.Services;
-using Auth.Domain.Interfaces.Factory;
-using Auth.Domain.Interfaces.Models;
-using Auth.Domain.Interfaces.Services;
-using Cloud.Infra;
+﻿using Cloud.Infra;
 using Core.Domain;
 using Core.Domain.Cloud;
 using Core.Domain.Repository;
@@ -25,6 +19,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using BTCSTXSwap.Domain;
 
 namespace BTCSTXSwap.Application
 {
@@ -54,10 +49,12 @@ namespace BTCSTXSwap.Application
 
             #region Repository
             injectDependency(typeof(IUserRepository<IUserModel, IUserDomainFactory>), typeof(UserRepository), services, scoped);
+            injectDependency(typeof(ITransactionRepository<ITransactionModel, ITransactionDomainFactory>), typeof(TransactionRepository), services, scoped);
             #endregion
 
             #region Service
             injectDependency(typeof(IUserService), typeof(UserService), services, scoped);
+            injectDependency(typeof(ITransactionService), typeof(TransactionService), services, scoped);
             injectDependency(typeof(ICoinMarketCapService), typeof(CoinMarketCapService), services, scoped);
             injectDependency(typeof(IBitcoinService), typeof(BitcoinService), services, scoped);
             injectDependency(typeof(IGLogService), typeof(GLogService), services, scoped);
@@ -65,6 +62,7 @@ namespace BTCSTXSwap.Application
 
             #region Factory
             injectDependency(typeof(IUserDomainFactory), typeof(UserDomainFactory), services, scoped);
+            injectDependency(typeof(ITransactionDomainFactory), typeof(TransactionDomainFactory), services, scoped);
             injectDependency(typeof(IGLogDomainFactory), typeof(GLogDomainFactory), services, scoped);
             #endregion
 

@@ -1,20 +1,38 @@
+const API_URL = "https://localhost:44374";
+
 function doError(msg) {
     $("#errorBox span").text(msg);
     $("#errorBox").show();
-    $("#openModalBtn").prop("disabled", true);
+    //$("#openModalBtn").prop("disabled", true);
 }
 
 function loadPrice() {
-    $.getJSON( "https://localhost:44374/api/CoinMarketCap/getcurrentprice", function( data ) {
+    $.getJSON( API_URL + "/api/CoinMarketCap/getcurrentprice", function( data ) {
         //alert(JSON.stringify(data));
         $("p.description").data("bitcoin", data.btcToStxText);
         $("p.description").data("stacks", data.stxToBtcText);
-        $("p.description").text(($("#title").data("coin") == "bitcoin") ? 
-            $("p.description").data("bitcoin") : 
-            $("p.description").data("stacks")
-        );
         $("#BtcProportion").val(data.btcProportion);
         $("#StxProportion").val(data.stxProportion);
+        let priceBtc = parseFloat(data.original.price).toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        });
+        let priceStx = parseFloat(data.destiny.price).toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        });
+        $("p.description").data("btcPrice", priceBtc);
+        $("p.description").data("stxPrice", priceStx);
+        if ($("#title").data("coin") == "bitcoin") {
+            $("p.description").text($("p.description").data("bitcoin"));
+            $("#origPrice").text($("p.description").data("btcPrice"));
+            $("#destPrice").text($("p.description").data("stxPrice"));
+        }
+        else {
+            $("p.description").text($("p.description").data("stacks"));
+            $("#origPrice").text($("p.description").data("stxPrice"));
+            $("#destPrice").text($("p.description").data("btcPrice"));
+        }
 
         $("#openModalBtn").prop("disabled", false);
     }).fail(function() {
@@ -22,8 +40,25 @@ function loadPrice() {
     });
 }
 
+function registerUser(btcAddr, stxAddr) {
+    $("#BtcAddress").val(btcAddr);
+    $("#StxAddress").val(stxAddr);
+
+    let apiUrl = API_URL + "/api/Auth/checkUserRegister/" + btcAddr + "/" + stxAddr;
+    $.getJSON( apiUrl, function( data ) {
+        alert(JSON.stringify(data));
+        let userAddr = btcAddr.substr(0, 6) + '...' + btcAddr.substr(-4);
+        $("#userName").text(userAddr);
+        $("#navbarUser").show();
+        $("#connectBtn").hide();
+    }).fail(function() {
+        doError("Cannot registrer user.");
+        $("#openModalBtn").prop("disabled", true);
+    });
+}
+
 function loadPoolInfo() {
-    $.getJSON( "https://localhost:44374/api/Pool/getpoolinfo", function( data ) {
+    $.getJSON( API_URL + "/api/Pool/getpoolinfo", function( data ) {
         //alert(JSON.stringify(data));
         //alert(data.btcAddress);
         $("#PoolBtcAddress").val(data.btcAddress);
@@ -33,10 +68,19 @@ function loadPoolInfo() {
         //$("#openModalBtn").prop("disabled", false);
     }).fail(function() {
         doError("Cannot get pool information.");
+        $("#openModalBtn").prop("disabled", true);
     });
 }
 
 (function(){
+
+    /*
+    $.ajaxSetup({
+        headers : {   
+          'Authorization' : 'Basic ' + 
+        }
+      });
+      */
 
     /*
     function accountFromDerivationPath(path) {
@@ -47,6 +91,12 @@ function loadPoolInfo() {
         return account;
     }
     */
+
+    $("#alertClose").on("click", function (e) {
+        e.preventDefault();
+
+        $("#errorBox").hide();
+    });
 
     $("#openModalBtn").prop("disabled", false);
 
@@ -82,6 +132,10 @@ function loadPoolInfo() {
             $("#destSelected").val("bitcoin");
             $("#title").text("STX To BTC");
             $("p.description").text($("p.description").data("stacks"));
+
+            $("#origPrice").text($("p.description").data("stxPrice"));
+            $("#destPrice").text($("p.description").data("btcPrice"));
+
             $("#title").data("coin", "stacks");
         }
         else {
@@ -89,6 +143,10 @@ function loadPoolInfo() {
             $("#destSelected").val("stacks");
             $("#title").text("BTC To STX");
             $("p.description").text($("p.description").data("bitcoin"));
+
+            $("#origPrice").text($("p.description").data("btcPrice"));
+            $("#destPrice").text($("p.description").data("stxPrice"));
+
             $("#title").data("coin", "bitcoin");
         }
     });
@@ -103,13 +161,8 @@ function loadPoolInfo() {
         window.LeatherProvider?.request("getAddresses").then(function (response) {
 
             let addr = response.result.addresses.find(addr => addr.type == "p2wpkh");
-            $("#BtcAddress").val(addr.address);
             let addrStx = response.result.addresses.find(addr => addr.symbol == "STX");
-            $("#StxAddress").val(addrStx.address);
-            let userAddr = addr.address.substr(0, 6) + '...' + addr.address.substr(-4);
-            $("#userName").text(userAddr);
-            $("#navbarUser").show();
-            $("#connectBtn").hide();
+            registerUser(addr.address, addrStx.address);
         });
 
     });
@@ -124,17 +177,24 @@ function loadPoolInfo() {
         e.preventDefault();
 
         let vOrigAmout = parseFloat($("#origAmount").val());
-        vOrigAmout = Math.round(vOrigAmout * 100000) / 100000;
-        $(".modalOrigCoin").text(vOrigAmout + " BTC");
 
-        let vDestAmout = parseFloat($("#destAmount").val());
-        vDestAmout = Math.round(vDestAmout * 100000) / 100000;
-        $(".modalDestCoin").text($("#destAmount").val() + " STX");
+        if (vOrigAmout > 0) {
 
-        $(".modalOrigAddr").text($("#PoolBtcAddress").val());
-        $(".modalDestAddr").text($("#stxAddress").val());
+            vOrigAmout = Math.round(vOrigAmout * 100000) / 100000;
+            $(".modalOrigCoin").text(vOrigAmout + " BTC");
 
-        $("#swapModal").modal("show");
+            let vDestAmout = parseFloat($("#destAmount").val());
+            vDestAmout = Math.round(vDestAmout * 100000) / 100000;
+            $(".modalDestCoin").text($("#destAmount").val() + " STX");
+
+            $(".modalOrigAddr").text($("#PoolBtcAddress").val());
+            $(".modalDestAddr").text($("#stxAddress").val());
+
+            $("#swapModal").modal("show");
+        }
+        else {
+            doError("Amount cant be empty.");
+        }
     });
     
 
@@ -161,8 +221,37 @@ function loadPoolInfo() {
               ],
               network: "testnet",
             }).then(function (response) {
+
                 alert(response.result.txid);
                 console.log("Transaction ID:", response.result.txid);
+
+                let vOrigAmout = parseFloat($("#origAmount").val()) * 100000000;
+                let vDestAmout = parseFloat($("#destAmount").val()) * 100000000;
+
+                let txParam = {
+                    btcToStx: true,
+                    btcAddress: $("#BtcAddress").val(),
+                    stxAddress: $("#StxAddress").val(),
+                    btcTxid: response.result.txid,
+                    stxTxid: null,
+                    btcAmount: vOrigAmout,
+                    stxAmount: vDestAmout
+                };
+                $.ajax({
+                    url: API_URL + "/api/Transaction/createTx",
+                    type: "PUT",
+                    data: JSON.stringify(txParam),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(response) {
+                        alert(JSON.stringify(response));
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        doError(xhr.responseText);
+                        $("#openModalBtn").prop("disabled", true);
+                    }
+                });
                 //$("#btcAddress").val()
             });
           
