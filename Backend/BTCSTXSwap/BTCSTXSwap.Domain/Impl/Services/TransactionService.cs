@@ -1,7 +1,9 @@
-﻿using BTCSTXSwap.Domain.Interfaces.Factory;
+﻿using BTCSTXSwap.Domain.Impl.Models;
+using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Models;
 using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO.Mempool;
+using BTCSTXSwap.DTO.Stacks;
 using BTCSTXSwap.DTO.Transaction;
 using System;
 using System.Collections.Generic;
@@ -18,13 +20,15 @@ namespace BTCSTXSwap.Domain.Impl.Services
         private readonly IBitcoinService _btcService;
         private readonly IStacksService _stxService;
         private readonly ITransactionDomainFactory _txFactory;
+        private readonly ITransactionLogDomainFactory _txLogFactory;
 
         public TransactionService(
             ICoinMarketCapService coinMarketCapService, 
             IMempoolService mempoolService, 
             IBitcoinService btcService, 
             IStacksService stxService,
-            ITransactionDomainFactory txFactory
+            ITransactionDomainFactory txFactory,
+            ITransactionLogDomainFactory txLogFactory
         )
         {
             _coinMarketCapService = coinMarketCapService;
@@ -32,6 +36,7 @@ namespace BTCSTXSwap.Domain.Impl.Services
             _btcService = btcService;
             _stxService = stxService;
             _txFactory = txFactory;
+            _txLogFactory = txLogFactory;
         }
 
         public ITransactionModel CreateTx(TransactionParamInfo param)
@@ -114,36 +119,60 @@ namespace BTCSTXSwap.Domain.Impl.Services
             return _txFactory.BuildTransactionModel().ListByStatus(status, _txFactory);
         }
 
+        private void AddLog(string txId, string msg, LogTypeEnum t = LogTypeEnum.Information)
+        {
+            var md = _txLogFactory.BuildTransactionLogModel();
+            md.TxId = txId;
+            md.Date = DateTime.Now;
+            md.LogType = t;
+            md.Message = msg;
+            md.Insert();
+        }
+
         private async Task<bool> ProcessBtcTransaction(ITransactionModel tx) {
             if (string.IsNullOrEmpty(tx.BtcTxid))
             {
-                throw new Exception("Transaction txid is empty");
+                AddLog(tx.BtcTxid, "Transaction tx_id is empty", LogTypeEnum.Error);
+                tx.Status = TransactionStatusEnum.InvalidInformation;
+                tx.Update();
+                return await Task.FromResult(false);
             }
             var mempoolTx = await _mempoolService.GetTransaction(tx.BtcTxid);
             if (mempoolTx == null)
             {
-                throw new Exception("Dont find transaction on mempool");
+                //throw new Exception("Dont find transaction on mempool");
+                AddLog(tx.BtcTxid, "Dont find transaction on mempool", LogTypeEnum.Warning);
+                return await Task.FromResult(false);
             }
             var poolBtcAddr = _btcService.GetPoolAddress();
 
-            var addrs = new List<string>();
-            addrs.AddRange(mempoolTx.VIn.Select(x => x.Prevout.ScriptPubKeyAddress));
-            addrs.AddRange(mempoolTx.VOut.Select(x => x.ScriptPubKeyAddress));
+            //var addrs = new List<string>();
+            var addrsSender = mempoolTx.VIn.Select(x => x.Prevout.ScriptPubKeyAddress).ToList();
+            var addrsReceiver = mempoolTx.VOut.Select(x => x.ScriptPubKeyAddress).ToList();
 
-            if (!addrs.Contains(tx.BtcAddress))
+            if (!addrsSender.Contains(tx.BtcAddress))
             {
-                throw new Exception("Sender address not in transaction");
+                AddLog(tx.BtcTxid, "Sender address not in transaction", LogTypeEnum.Error);
+                tx.Status = TransactionStatusEnum.InvalidInformation;
+                tx.Update();
+                return await Task.FromResult(false);
             }
 
-            if (!addrs.Contains(poolBtcAddr))
+            if (!addrsReceiver.Contains(poolBtcAddr))
             {
-                throw new Exception("Pool address not in transaction");
+                AddLog(tx.BtcTxid, "Pool address not in transaction", LogTypeEnum.Error);
+                tx.Status = TransactionStatusEnum.InvalidInformation;
+                tx.Update();
+                return await Task.FromResult(false);
             }
 
             var poolBtcAmount = mempoolTx.VOut.Where(x => x.ScriptPubKeyAddress == poolBtcAddr).Select(x => x.Value).Sum();
             if (poolBtcAmount <= 0)
             {
-                throw new Exception("Pool did not receive any value");
+                AddLog(tx.BtcTxid, "Pool did not receive any value", LogTypeEnum.Error);
+                tx.Status = TransactionStatusEnum.InvalidInformation;
+                tx.Update();
+                return await Task.FromResult(false);
             }
             switch (tx.Status)
             {
@@ -156,12 +185,18 @@ namespace BTCSTXSwap.Domain.Impl.Services
                     tx.BtcFee = mempoolTx.Fee;
                     tx.Status = TransactionStatusEnum.Calculated;
                     tx.Update();
+
+                    decimal btcValue = Math.Round(poolBtcAmount / 100000000M, 5);
+                    decimal stxValue = Math.Round(stxAmount / 100000000M, 5);
+
+                    AddLog(tx.BtcTxid, string.Format("Transaction has {0:N5} BTC, Fee {0:N0} and extimate {0:N5} STX.", btcValue, tx.BtcFee, stxValue), LogTypeEnum.Information);
                     break;
                 case TransactionStatusEnum.Calculated:
                     if (mempoolTx.Status.Confirmed)
                     {
-                        tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
+                        tx.Status = TransactionStatusEnum.BtcConfirmed;
                         tx.Update();
+                        AddLog(tx.BtcTxid, "BTC Transaction confirmed.", LogTypeEnum.Information);
                     }
                     else
                     {
@@ -172,14 +207,86 @@ namespace BTCSTXSwap.Domain.Impl.Services
                 case TransactionStatusEnum.BtcNotConfirmed:
                     if (mempoolTx.Status.Confirmed)
                     {
-                        //tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
-                        //tx.Update();
-                        await StartStxTransfer(tx, mempoolTx.Fee, poolBtcAmount);
+                        tx.Status = TransactionStatusEnum.BtcConfirmed;
+                        tx.Update();
+                        AddLog(tx.BtcTxid, "BTC Transaction confirmed.", LogTypeEnum.Information);
+                    }
+                    break;
+                case TransactionStatusEnum.BtcConfirmed:
+                    if (!mempoolTx.Status.Confirmed)
+                    {
+                        AddLog(tx.BtcTxid, "Transaction local is confirmed, but mempool not confirm", LogTypeEnum.Error);
+                        tx.Status = TransactionStatusEnum.InvalidInformation;
+                        tx.Update();
+                        return await Task.FromResult(false);
+                    }
+                    var price2 = _coinMarketCapService.GetCurrentPrice("bitcoin", "stacks");
+                    var stxAmount2 = Convert.ToInt64((poolBtcAmount / price2.BtcProportion) * 100000000M);
+
+                    tx.BtcAmount = poolBtcAmount;
+                    tx.StxAmount = stxAmount2;
+                    tx.BtcFee = mempoolTx.Fee;
+                    tx.Update();
+
+                    decimal btcValue2 = Math.Round(poolBtcAmount / 100000000M, 5);
+                    decimal stxValue2 = Math.Round(stxAmount2 / 100000000M, 5);
+
+                    AddLog(tx.BtcTxid, string.Format("Transaction has {0:N5} BTC, Fee {0:N0} and extimate {0:N5} STX.", btcValue2, tx.BtcFee, stxValue2), LogTypeEnum.Information);
+
+                    var poolAddr = await _stxService.GetPoolAddress();
+                    var poolBalance = await _stxService.GetBalance(poolAddr);
+                    if (poolBalance < stxAmount2)
+                    {
+                        AddLog(tx.BtcTxid, "Pool without enough STX", LogTypeEnum.Warning);
+                        return await Task.FromResult(false);
+                    }
+                    try
+                    {
+                        var txId = await StartStxTransfer(tx, stxAmount2);
+                        if (string.IsNullOrEmpty(txId))
+                        {
+                            AddLog(tx.BtcTxid, "Tansaction ID (tx_id) is empty", LogTypeEnum.Warning);
+                            return await Task.FromResult(false);
+                        }
+                        tx.StxAddress = txId;
+                        tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
+                        tx.Update();
+                    }
+                    catch (Exception err)
+                    {
+                        AddLog(tx.BtcTxid, err.Message, LogTypeEnum.Error);
+                        tx.Status = TransactionStatusEnum.CriticalError;
+                        tx.Update();
+                        return await Task.FromResult(false);
+                    }
+                    break;
+                case TransactionStatusEnum.BtcConfirmedStxNotConfirmed:
+                    if (string.IsNullOrEmpty(tx.StxTxid))
+                    {
+                        AddLog(tx.BtcTxid, "STX Transaction ID (tx_id) is empty", LogTypeEnum.Warning);
+                        return await Task.FromResult(false);
+                    }
+                    var stxTx = await _stxService.GetTransaction(tx.StxTxid);
+                    if (stxTx == null)
+                    {
+                        AddLog(tx.BtcTxid, "STX Transaction is empty", LogTypeEnum.Warning);
+                        return await Task.FromResult(false);
+                    }
+                    if (string.Compare(stxTx.TxStatus, "success", true) == 0)
+                    {
+                        int fee = 0;
+                        if (!int.TryParse(stxTx.FeeRate, out fee))
+                        {
+                            AddLog(tx.BtcTxid, string.Format("Cant convert fee to int ({0})", stxTx.FeeRate), LogTypeEnum.Warning);
+                            return await Task.FromResult(false);
+                        }
+                        tx.StxFee = fee;
+                        tx.Status = TransactionStatusEnum.BtcConfirmedStxConfirmed;
+                        tx.Update();
+                        AddLog(tx.BtcTxid, "STX Transaction confirmed.", LogTypeEnum.Information);
                     }
                     break;
             }
-
-            //var btcOrigAddr = mempoolTx.VIn.First().Prevout.ScriptPubKeyAddress;
             return await Task.FromResult(true);
         }
 
@@ -191,7 +298,16 @@ namespace BTCSTXSwap.Domain.Impl.Services
             }
             if (tx.Type == TransactionEnum.BtcToStx)
             {
-                return await ProcessBtcTransaction(tx);
+                try
+                {
+                    return await ProcessBtcTransaction(tx);
+                }
+                catch (Exception err)
+                {
+                    AddLog(tx.BtcTxid, err.Message, LogTypeEnum.Error);
+                    tx.Status = TransactionStatusEnum.CriticalError;
+                    tx.Update();
+                }
             }
             else
             {
@@ -200,23 +316,9 @@ namespace BTCSTXSwap.Domain.Impl.Services
             return await Task.FromResult(false);
         }
 
-        private async Task<bool> StartStxTransfer(ITransactionModel tx, int btcFee, long poolBtcAmount)
+        private async Task<string> StartStxTransfer(ITransactionModel tx, long stxAmount)
         {
-            var price = _coinMarketCapService.GetCurrentPrice("bitcoin", "stacks");
-            var stxAmount = Convert.ToInt64((poolBtcAmount / price.BtcProportion) * 100000000M);
-
-            tx.BtcAmount = poolBtcAmount;
-            tx.StxAmount = stxAmount;
-            tx.BtcFee = btcFee;
-            tx.Update();
-
-            var poolAddr = await _stxService.GetPoolAddress();
-            var poolBalance = await _stxService.GetBalance(poolAddr);
-            if (poolBalance < stxAmount)
-            {
-                throw new Exception("Pool without enough STX");
-            }
-            var txHandle = await _stxService.Transfer(new DTO.Stacks.TransferParamInfo
+            var txHandle = await _stxService.Transfer(new TransferParamInfo
             {
                 recipientAddress = tx.StxAddress,
                 amount = stxAmount
@@ -227,12 +329,9 @@ namespace BTCSTXSwap.Domain.Impl.Services
             }
             if (!string.IsNullOrEmpty(txHandle.TxId))
             {
-                tx.StxTxid = txHandle.TxId;
-                tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
-                tx.Update();
-                return await Task.FromResult(true);
+                return await Task.FromResult(txHandle.TxId);
             }
-            return await Task.FromResult(false);
+            return await Task.FromResult("");
         }
     }
 }

@@ -18,6 +18,7 @@ namespace BTCSTXSwap.DTO.Transaction
         StxConfirmedBtcNotConfirmed = 8,
         BtcConfirmedStxConfirmed = 9,
         StxConfirmedBtcConfirmed = 10,
-        InvalidInformation = 11
+        InvalidInformation = 11,
+        CriticalError = 12
     }
 }

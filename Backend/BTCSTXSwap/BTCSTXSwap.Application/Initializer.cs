@@ -2,7 +2,6 @@
 using Core.Domain;
 using Core.Domain.Cloud;
 using Core.Domain.Repository;
-using Core.Domain.Withdraw;
 using DB.Infra;
 using DB.Infra.Context;
 using DB.Infra.Repository;
@@ -65,6 +64,7 @@ namespace BTCSTXSwap.Application
             #region Factory
             injectDependency(typeof(IUserDomainFactory), typeof(UserDomainFactory), services, scoped);
             injectDependency(typeof(ITransactionDomainFactory), typeof(TransactionDomainFactory), services, scoped);
+            injectDependency(typeof(ITransactionLogDomainFactory), typeof(TransactionLogDomainFactory), services, scoped);
             injectDependency(typeof(IGLogDomainFactory), typeof(GLogDomainFactory), services, scoped);
             #endregion
 

@@ -34,6 +34,19 @@ namespace BTCSTXSwap.Domain.Impl.Services
             }
         }
 
+        public async Task<TxInfo> GetTransaction(string txId)
+        {
+            using (var client = new HttpClient())
+            {
+                string url = $"{STACKS_API}/v1/tx/{txId}";
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<TxInfo>(responseBody);
+            }
+        }
+
         public async Task<string> GetPoolAddress() {
             using (var client = new HttpClient())
             {

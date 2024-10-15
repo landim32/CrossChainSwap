@@ -10,9 +10,8 @@ namespace BTCSTXSwap.Domain.Interfaces.Services
     public interface IStacksService
     {
         Task<long> GetBalance(string stxAddress);
-
+        Task<TxInfo> GetTransaction(string txId);
         Task<string> GetPoolAddress();
-
         Task<TxHandleInfo> Transfer(TransferParamInfo param);
 
     }
