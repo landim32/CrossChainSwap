@@ -58,6 +58,7 @@ namespace BTCSTXSwap.Application
             injectDependency(typeof(IMempoolService), typeof(MempoolService), services, scoped);
             injectDependency(typeof(ICoinMarketCapService), typeof(CoinMarketCapService), services, scoped);
             injectDependency(typeof(IBitcoinService), typeof(BitcoinService), services, scoped);
+            injectDependency(typeof(IStacksService), typeof(StacksService), services, scoped);
             injectDependency(typeof(IGLogService), typeof(GLogService), services, scoped);
             #endregion
 

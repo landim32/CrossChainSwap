@@ -1,6 +1,7 @@
 ﻿using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Models;
 using BTCSTXSwap.Domain.Interfaces.Services;
+using BTCSTXSwap.DTO.Mempool;
 using BTCSTXSwap.DTO.Transaction;
 using System;
 using System.Collections.Generic;
@@ -15,18 +16,21 @@ namespace BTCSTXSwap.Domain.Impl.Services
         private readonly ICoinMarketCapService _coinMarketCapService;
         private readonly IMempoolService _mempoolService;
         private readonly IBitcoinService _btcService;
+        private readonly IStacksService _stxService;
         private readonly ITransactionDomainFactory _txFactory;
 
         public TransactionService(
             ICoinMarketCapService coinMarketCapService, 
             IMempoolService mempoolService, 
             IBitcoinService btcService, 
+            IStacksService stxService,
             ITransactionDomainFactory txFactory
         )
         {
             _coinMarketCapService = coinMarketCapService;
             _mempoolService = mempoolService;
             _btcService = btcService;
+            _stxService = stxService;
             _txFactory = txFactory;
         }
 
@@ -168,8 +172,9 @@ namespace BTCSTXSwap.Domain.Impl.Services
                 case TransactionStatusEnum.BtcNotConfirmed:
                     if (mempoolTx.Status.Confirmed)
                     {
-                        tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
-                        tx.Update();
+                        //tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
+                        //tx.Update();
+                        await StartStxTransfer(tx, mempoolTx.Fee, poolBtcAmount);
                     }
                     break;
             }
@@ -191,6 +196,41 @@ namespace BTCSTXSwap.Domain.Impl.Services
             else
             {
 
+            }
+            return await Task.FromResult(false);
+        }
+
+        private async Task<bool> StartStxTransfer(ITransactionModel tx, int btcFee, long poolBtcAmount)
+        {
+            var price = _coinMarketCapService.GetCurrentPrice("bitcoin", "stacks");
+            var stxAmount = Convert.ToInt64((poolBtcAmount / price.BtcProportion) * 100000000M);
+
+            tx.BtcAmount = poolBtcAmount;
+            tx.StxAmount = stxAmount;
+            tx.BtcFee = btcFee;
+            tx.Update();
+
+            var poolAddr = await _stxService.GetPoolAddress();
+            var poolBalance = await _stxService.GetBalance(poolAddr);
+            if (poolBalance < stxAmount)
+            {
+                throw new Exception("Pool without enough STX");
+            }
+            var txHandle = await _stxService.Transfer(new DTO.Stacks.TransferParamInfo
+            {
+                recipientAddress = tx.StxAddress,
+                amount = stxAmount
+            });
+            if (!string.IsNullOrEmpty(txHandle.Error))
+            {
+                throw new Exception(string.Format("{0} ({1})", txHandle.Error, txHandle.Reason));
+            }
+            if (!string.IsNullOrEmpty(txHandle.TxId))
+            {
+                tx.StxTxid = txHandle.TxId;
+                tx.Status = TransactionStatusEnum.BtcConfirmedStxNotConfirmed;
+                tx.Update();
+                return await Task.FromResult(true);
             }
             return await Task.FromResult(false);
         }
