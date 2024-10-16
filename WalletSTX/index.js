@@ -24,7 +24,7 @@ async function getAddress() {
     const mnemonic = await loadMnemonic();
     const wallet = await generateWallet({ secretKey: mnemonic });
     const account = wallet.accounts[0];
-    const address = getStxAddress({ account, transactionVersion: TransactionVersion.Testnet });
+    const address = await getStxAddress({ account, transactionVersion: TransactionVersion.Testnet });
     console.log('Address:', address);
     return address;
 }

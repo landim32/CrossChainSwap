@@ -2,6 +2,7 @@
 using BTCSTXSwap.DTO.Mempool;
 using NBitcoin;
 using Newtonsoft.Json;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
