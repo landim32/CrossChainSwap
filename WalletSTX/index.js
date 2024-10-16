@@ -11,6 +11,8 @@ async function loadMnemonic() {
         throw new Error('mnemonic file not exist.');
     }
     const mnemonic = fs.readFileSync(mnemonicFilePath, 'utf8');
+    //const mnemonic = fs.readFileSync(mnemonicFilePath);
+    console.log('MNemonic:', mnemonic.trim());
     return mnemonic.trim();
 }
 
