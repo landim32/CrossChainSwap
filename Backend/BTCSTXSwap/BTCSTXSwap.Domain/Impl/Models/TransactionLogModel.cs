@@ -1,4 +1,4 @@
-﻿using BTCSTXSwap.Domain.Interfaces.Factory;
+﻿    using BTCSTXSwap.Domain.Interfaces.Factory;
 using BTCSTXSwap.Domain.Interfaces.Models;
 using Core.Domain.Repository;
 using Core.Domain;
@@ -22,7 +22,7 @@ namespace BTCSTXSwap.Domain.Impl.Models
         }
 
         public long LogId { get; set; }
-        public string TxId { get; set; }
+        public long TxId { get; set; }
         public DateTime Date { get; set; }
         public LogTypeEnum LogType { get; set; }
         public string Message { get; set; }

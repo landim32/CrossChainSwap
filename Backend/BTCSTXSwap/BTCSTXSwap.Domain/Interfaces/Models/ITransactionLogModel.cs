@@ -11,7 +11,7 @@ namespace BTCSTXSwap.Domain.Interfaces.Models
     public interface ITransactionLogModel
     {
         long LogId { get; set; }
-        string TxId { get; set; }
+        long TxId { get; set; }
         DateTime Date {  get; set; }
         LogTypeEnum LogType { get; set; }
         string Message { get; set; }

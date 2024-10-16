@@ -7,6 +7,11 @@ namespace DB.Infra.Context
 {
     public partial class Transaction
     {
+        public Transaction()
+        {
+            TransactionLogs = new HashSet<TransactionLog>();
+        }
+
         public long TxId { get; set; }
         public int Type { get; set; }
         public string BtcAddress { get; set; }
@@ -20,5 +25,7 @@ namespace DB.Infra.Context
         public int? StxFee { get; set; }
         public long? BtcAmount { get; set; }
         public long? StxAmount { get; set; }
+
+        public virtual ICollection<TransactionLog> TransactionLogs { get; set; }
     }
 }

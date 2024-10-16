@@ -18,6 +18,7 @@ namespace DB.Infra.Context
         }
 
         public virtual DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<TransactionLog> TransactionLogs { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -35,16 +36,14 @@ namespace DB.Infra.Context
 
             modelBuilder.Entity<Transaction>(entity =>
             {
-                entity.HasKey(e => new { e.TxId, e.Type })
-                    .HasName("pk_transaction");
+                entity.HasKey(e => e.TxId)
+                    .HasName("pk_tx");
 
                 entity.ToTable("transactions");
 
                 entity.Property(e => e.TxId)
                     .HasColumnName("tx_id")
                     .HasDefaultValueSql("nextval('transactions_tx_nid_seq'::regclass)");
-
-                entity.Property(e => e.Type).HasColumnName("type");
 
                 entity.Property(e => e.BtcAddress)
                     .IsRequired()
@@ -78,7 +77,39 @@ namespace DB.Infra.Context
                     .HasColumnName("stx_txid")
                     .IsFixedLength(true);
 
+                entity.Property(e => e.Type).HasColumnName("type");
+
                 entity.Property(e => e.UpdateAt).HasColumnName("update_at");
+            });
+
+            modelBuilder.Entity<TransactionLog>(entity =>
+            {
+                entity.HasKey(e => e.LogId)
+                    .HasName("pk_tx_log");
+
+                entity.ToTable("transaction_logs");
+
+                entity.Property(e => e.LogId)
+                    .HasColumnName("log_id")
+                    .HasDefaultValueSql("nextval('transactions_log_log_id_seq'::regclass)");
+
+                entity.Property(e => e.Date).HasColumnName("date");
+
+                entity.Property(e => e.LogType)
+                    .HasColumnName("log_type")
+                    .HasDefaultValueSql("1");
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(300)
+                    .HasColumnName("message");
+
+                entity.Property(e => e.TxId).HasColumnName("tx_id");
+
+                entity.HasOne(d => d.Tx)
+                    .WithMany(p => p.TransactionLogs)
+                    .HasForeignKey(d => d.TxId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_tx_log");
             });
 
             modelBuilder.Entity<User>(entity =>
