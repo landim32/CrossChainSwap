@@ -73,6 +73,18 @@ function loadPoolInfo() {
     });
 }
 
+function loadMySwaps() {
+    $("#mainContainer").load("./list.html", function () {
+        //
+    });
+}
+
+function loadAllSwaps() {
+    $("#mainContainer").load("./list.html", function () {
+        //
+    });
+}
+
 function loadSwapForm() {
     $("#mainContainer").load("./swap.html", function () {
         $("#alertClose").on("click", function (e) {
@@ -269,6 +281,31 @@ function loadSwapForm() {
         else {
             doError("Amount cant be empty.");
         }
+    });
+
+    $("#linkHome").on("click", function (e) {
+        e.preventDefault();
+
+        $(".av-link").removeClass("active");
+        $(this).addClass("active");
+
+        loadSwapForm();
+    });
+    $("#linkMySwaps").on("click", function (e) {
+        e.preventDefault();
+
+        $(".av-link").removeClass("active");
+        $(this).addClass("active");
+
+        loadMySwaps();
+    });
+    $("#linkAllSwaps").on("click", function (e) {
+        e.preventDefault();
+
+        $(".av-link").removeClass("active");
+        $(this).addClass("active");
+
+        loadAllSwaps();
     });
 
     //loadPrice();

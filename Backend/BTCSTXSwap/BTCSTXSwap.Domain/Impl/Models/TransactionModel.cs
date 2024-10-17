@@ -56,6 +56,11 @@ namespace BTCSTXSwap.Domain.Impl.Models
             return _repositoryTx.ListByStatus(status, factory);
         }
 
+        public IEnumerable<ITransactionModel> ListAll(ITransactionDomainFactory factory)
+        {
+            return _repositoryTx.ListAll(factory);
+        }
+
         public ITransactionModel Save()
         {
             return _repositoryTx.SaveTx(this);

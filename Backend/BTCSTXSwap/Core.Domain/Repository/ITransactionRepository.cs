@@ -14,5 +14,6 @@ namespace Core.Domain.Repository
         TModel UpdateTx(TModel model);
         IEnumerable<TModel> ListByBtcAddr(string btcAddr, TFactory factory);
         IEnumerable<TModel> ListByStatus(IList<int> status, TFactory factory);
+        IEnumerable<TModel> ListAll(TFactory factory);
     }
 }

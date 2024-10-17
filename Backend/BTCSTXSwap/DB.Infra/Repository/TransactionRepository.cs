@@ -3,6 +3,7 @@ using BTCSTXSwap.Domain.Interfaces.Models;
 using BTCSTXSwap.DTO.Transaction;
 using Core.Domain.Repository;
 using DB.Infra.Context;
+using NoobsMuc.Coinmarketcap.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,6 +100,12 @@ namespace DB.Infra.Repository
         public IEnumerable<ITransactionModel> ListByStatus(IList<int> status, ITransactionDomainFactory factory)
         {
             var rows = _ccsContext.Transactions.Where(x => status.Contains(x.Status)).OrderBy(x => x.CreateAt).ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
+        public IEnumerable<ITransactionModel> ListAll(ITransactionDomainFactory factory)
+        {
+            var rows = _ccsContext.Transactions.OrderByDescending(x => x.UpdateAt).Take(100).ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 

@@ -30,5 +30,6 @@ namespace BTCSTXSwap.Domain.Interfaces.Models
         ITransactionModel GetById(long txId, ITransactionDomainFactory factory);
         IEnumerable<ITransactionModel> ListByBtcAddr(string btcAddr, ITransactionDomainFactory factory);
         IEnumerable<ITransactionModel> ListByStatus(IList<int> status, ITransactionDomainFactory factory);
+        IEnumerable<ITransactionModel> ListAll(ITransactionDomainFactory factory);
     }
 }
