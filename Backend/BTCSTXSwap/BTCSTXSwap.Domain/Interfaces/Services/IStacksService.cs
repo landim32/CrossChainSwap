@@ -12,6 +12,9 @@ namespace BTCSTXSwap.Domain.Interfaces.Services
         Task<long> GetBalance(string stxAddress);
         Task<TxInfo> GetTransaction(string txId);
         Task<string> GetPoolAddress();
+        string GetAddressUrl(string address);
+        string GetTransactionUrl(string txid);
+        string ConvertToString(long coin);
         Task<TxHandleInfo> Transfer(TransferParamInfo param);
 
     }

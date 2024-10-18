@@ -59,6 +59,21 @@ namespace BTCSTXSwap.Domain.Impl.Services
             }
         }
 
+        public string GetAddressUrl(string address)
+        {
+            return $"https://explorer.hiro.so/address/{address}?chain=testnet";
+        }
+
+        public string GetTransactionUrl(string txid)
+        {
+            return $"https://explorer.hiro.so/txid/{txid}?chain=testnet";
+        }
+
+        public string ConvertToString(long coin)
+        {
+            return ((decimal)coin / 100000000M).ToString("N5") + " STX";
+        }
+
         public async Task<TxHandleInfo> Transfer(TransferParamInfo param)
         {
             using (var client = new HttpClient())

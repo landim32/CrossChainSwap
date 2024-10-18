@@ -73,15 +73,40 @@ function loadPoolInfo() {
     });
 }
 
-function loadMySwaps() {
-    $("#mainContainer").load("./list.html", function () {
-        //
-    });
-}
-
 function loadAllSwaps() {
-    $("#mainContainer").load("./list.html", function () {
-        //
+    $("#mainContainer").load("./list.html", function (responseTxt, statusTxt, xhr) {
+        
+        $.getJSON( API_URL + "/api/Transaction/listalltransactions", function( data ) {
+            //alert(JSON.stringify(data));
+            $("#tableTx > tbody").empty();
+            data.forEach(function(item) {
+                let userAddr = ((item.inttype == 1) ? item.btcaddress : item.stxaddress);
+                let userView = userAddr.substr(0, 6) + '...' + userAddr.substr(-4);
+                let rowStr = 
+                    "<tr>\n" +
+                    "<td><a class=\"txBtn\" href=\"#modalTx\" data-txid=\"" + item.txid + "\">" + item.txtype + "</a></td>\n" +
+                    "<td><a class=\"txBtn\" href=\"#modalTx\" data-txid=\"" + item.txid + "\">" + userView + "</a></td>\n" +
+                    "<td><a class=\"txBtn\" href=\"#modalTx\" data-txid=\"" + item.txid + "\">" + item.updateat + "</a></td>\n" +
+                    "<td><a class=\"txBtn\" href=\"#modalTx\" data-txid=\"" + item.txid + "\">" + 
+                        ((item.inttype == 1) ? item.btcamount : item.stxamount) +
+                        " -> " +
+                        ((item.inttype == 1) ? item.stxamount : item.btcamount) + 
+                    "</a></td>\n" +
+                    "<td><a class=\"txBtn\" href=\"#modalTx\" data-txid=\"" + item.txid + "\">" + item.status + "</a></td>\n" +
+                    "</tr>";
+                $('#tableTx > tbody:last-child').append(rowStr);
+            });
+            $('.txBtn').on("click", function (e) {
+                e.preventDefault();
+
+                $("#txModal").modal("show");
+
+                return false;
+            })
+        }).fail(function() {
+            doError("Cannot get transactions informations.");
+            $("#openModalBtn").prop("disabled", true);
+        });
     });
 }
 
@@ -297,7 +322,7 @@ function loadSwapForm() {
         $(".av-link").removeClass("active");
         $(this).addClass("active");
 
-        loadMySwaps();
+        loadAllSwaps();
     });
     $("#linkAllSwaps").on("click", function (e) {
         e.preventDefault();

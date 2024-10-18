@@ -25,6 +25,21 @@ namespace BTCSTXSwap.Domain.Impl.Services
             return address.ToString();
         }
 
+        public string GetAddressUrl(string address)
+        {
+            return $"https://mempool.space/testnet/address/{address}";
+        }
+
+        public string GetTransactionUrl(string txid)
+        {
+            return $"https://mempool.space/testnet/tx/{txid}";
+        }
+
+        public string ConvertToString(long coin)
+        {
+            return ((decimal)coin / 100000000M).ToString("N5") + " BTC";
+        }
+
         public void RegisterTx(string txid)
         {
             throw new NotImplementedException();

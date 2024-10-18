@@ -10,6 +10,9 @@ namespace BTCSTXSwap.Domain.Interfaces.Services
     public interface IBitcoinService
     {
         string GetPoolAddress();
+        string GetAddressUrl(string address);
+        string GetTransactionUrl(string txid);
+        string ConvertToString(long coin);
         void RegisterTx(string txid);
     }
 }

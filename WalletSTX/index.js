@@ -64,15 +64,27 @@ const app = express();
 app.use(express.json());
 
 app.get('/get-address', async (req, res) => {
-    const address = await getAddress();
-    res.json(address);
+    try {
+        const address = await getAddress();
+        res.json(address);
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.json({ error: error});
+    }
 });
 
 app.put('/transfer', async (req, res) => {
-    console.log('Request:', req.body);
-    const { recipientAddress, amount, fee } = req.body;
-    const result = await transferSTX(recipientAddress, amount, fee);
-    res.json({ transactionHash: result });
+    try {
+        console.log('Request:', req.body);
+        const { recipientAddress, amount } = req.body;
+        const result = await transferSTX(recipientAddress, amount);
+        res.json({ transactionHash: result });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.json({ error: error});
+    }
 });
 
 app.listen(3000, () => {

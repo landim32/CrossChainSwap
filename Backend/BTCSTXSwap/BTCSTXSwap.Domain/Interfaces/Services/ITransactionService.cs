@@ -15,6 +15,7 @@ namespace BTCSTXSwap.Domain.Interfaces.Services
         ITransactionModel Update(TransactionInfo tx);
         IEnumerable<ITransactionModel> ListByStatusActive();
         IEnumerable<ITransactionModel> ListAll();
+        string GetTransactionEnumToString(TransactionStatusEnum status);
         Task<bool> ProcessTransaction(ITransactionModel tx);
     }
 }

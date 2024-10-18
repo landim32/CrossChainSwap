@@ -124,6 +124,50 @@ namespace BTCSTXSwap.Domain.Impl.Services
             return _txFactory.BuildTransactionModel().ListAll(_txFactory);
         }
 
+        public string GetTransactionEnumToString(TransactionStatusEnum status) {
+            string str = string.Empty;
+            switch (status)
+            {
+                case TransactionStatusEnum.Initialized:
+                    str = "Initialized";
+                    break;
+                case TransactionStatusEnum.Calculated:
+                    str = "Calculated";
+                    break;
+                case TransactionStatusEnum.BtcNotConfirmed:
+                    str = "Btc Not Confirmed";
+                    break;
+                case TransactionStatusEnum.StxNotConfirmed:
+                    str = "Stx Not Confirmed";
+                    break;
+                case TransactionStatusEnum.BtcConfirmed:
+                    str = "Btc Confirmed";
+                    break;
+                case TransactionStatusEnum.StxConfirmed:
+                    str = "Stx Confirmed";
+                    break;
+                case TransactionStatusEnum.BtcConfirmedStxNotConfirmed:
+                    str = "Btc Confirmed, Stx Not Confirmed";
+                    break;
+                case TransactionStatusEnum.StxConfirmedBtcNotConfirmed:
+                    str = "Stx Confirmed, Btc Not Confirmed";
+                    break;
+                case TransactionStatusEnum.BtcConfirmedStxConfirmed:
+                    str = "Btc Confirmed and Stx Confirmed";
+                    break;
+                case TransactionStatusEnum.StxConfirmedBtcConfirmed:
+                    str = "Stx Confirmed and Btc Confirmed";
+                    break;
+                case TransactionStatusEnum.InvalidInformation:
+                    str = "Invalid Information";
+                    break;
+                case TransactionStatusEnum.CriticalError:
+                    str = "Critical Error";
+                    break;
+            }
+            return str;
+        }
+
         private void AddLog(long txId, string msg, LogTypeEnum t = LogTypeEnum.Information)
         {
             var md = _txLogFactory.BuildTransactionLogModel();

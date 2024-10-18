@@ -1,4 +1,5 @@
-﻿using BTCSTXSwap.Domain.Interfaces.Services;
+﻿using BTCSTXSwap.API.DTO;
+using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO;
 using BTCSTXSwap.DTO.CoinMarketCap;
 using BTCSTXSwap.DTO.Transaction;
@@ -18,11 +19,20 @@ namespace BTCSTXSwap.API.Controllers
     {
         private IUserService _userService;
         private ITransactionService _txService;
+        private IBitcoinService _bitcoinService;
+        private IStacksService _stacksService;
 
-        public TransactionController(IUserService userService, ITransactionService txService)
+        public TransactionController(
+            IUserService userService, 
+            ITransactionService txService, 
+            IBitcoinService bitcoinService,
+            IStacksService stacksService
+        )
         {
             _userService = userService;
             _txService = txService;
+            _bitcoinService = bitcoinService;
+            _stacksService = stacksService;
         }
 
         [HttpPut("createTx")]
@@ -48,7 +58,7 @@ namespace BTCSTXSwap.API.Controllers
         }
 
         [HttpGet("listalltransactions")]
-        public ActionResult<IList<TransactionInfo>> ListAllTransactions()
+        public ActionResult<IList<TxResult>> ListAllTransactions()
         {
             try
             {
@@ -59,23 +69,28 @@ namespace BTCSTXSwap.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
                 */
-                var ds = _txService.ListAll().Select(x => new TransactionInfo
+                var ds = _txService.ListAll().Select(x => new TxResult
                 {
                     TxId = x.TxId,
-                    Type = x.Type,
+                    IntType = (int) x.Type,
+                    TxType = x.Type == TransactionEnum.BtcToStx ? "BTC To STX" : "STX to BTC",
                     BtcAddress = x.BtcAddress,
+                    BtcAddressUrl = (x.BtcAddress != null) ? _bitcoinService.GetAddressUrl(x.BtcAddress) : null,
                     StxAddress = x.StxAddress,
-                    CreateAt = x.CreateAt,
-                    UpdateAt = x.UpdateAt,
-                    Status = x.Status,
+                    StxAddressUrl = (x.StxAddress != null) ? _stacksService.GetAddressUrl(x.StxAddress) : null,
+                    CreateAt = x.CreateAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                    UpdateAt = x.UpdateAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                    Status = _txService.GetTransactionEnumToString(x.Status),
                     BtcTxid = x.BtcTxid,
+                    BtcTxidUrl = !string.IsNullOrEmpty(x.BtcTxid) ? _bitcoinService.GetTransactionUrl(x.BtcTxid) : null,
                     StxTxid = x.StxTxid,
-                    BtcFee = x.BtcFee,
-                    StxFee = x.StxFee,
-                    BtcAmount = x.BtcAmount,
-                    StxAmount = x.StxAmount
+                    StxTxidUrl = !string.IsNullOrEmpty(x.StxTxid) ? _stacksService.GetTransactionUrl(x.StxTxid) : null,
+                    BtcFee = x.BtcFee.HasValue ? _bitcoinService.ConvertToString(x.BtcFee.Value) : null,
+                    StxFee = x.StxFee.HasValue ? _stacksService.ConvertToString(x.StxFee.Value) : null,
+                    BtcAmount = x.BtcAmount.HasValue ? _bitcoinService.ConvertToString(x.BtcAmount.Value) : null,
+                    StxAmount = x.StxAmount.HasValue ? _stacksService.ConvertToString(x.StxAmount.Value) : null
                 }).ToList();
-                return new ActionResult<IList<TransactionInfo>>(ds);
+                return new ActionResult<IList<TxResult>>(ds);
             }
             catch (Exception ex)
             {
