@@ -74,8 +74,10 @@ function loadPoolInfo() {
 }
 
 function loadAllSwaps() {
-    $("#mainContainer").load("./list.html", function (responseTxt, statusTxt, xhr) {
-        
+    $("#mainContainer").load("./list.html", function () {
+
+        //$("#tableTx > tbody").empty();        
+
         $.getJSON( API_URL + "/api/Transaction/listalltransactions", function( data ) {
             //alert(JSON.stringify(data));
             $("#tableTx > tbody").empty();
@@ -100,6 +102,54 @@ function loadAllSwaps() {
                 e.preventDefault();
 
                 $("#txModal").modal("show");
+
+                let txId = $(this).data("txid");
+
+                $.getJSON( API_URL + "/api/Transaction/gettransaction/" + txId, function( data ) {
+                    //alert(JSON.stringify(data));
+                    $("#txTransactionTitle").text("Transaction " + data.txtype + " #" + data.txid);
+                    $("#txStatus").text(data.status);
+                    if (data.inttype == 1) {
+                        $("#txOrigAddressLabel").text("BTC Address");
+                        $("#txOrigAddress").attr("href", data.btcaddressurl);
+                        $("#txOrigAddress").text(data.btcaddress);
+                        $("#txOrigTxIdLabel").text("BTC TxID");
+                        $("#txOrigTxId").attr("href", data.btctxidurl);
+                        $("#txOrigTxId").text(data.btctxid);
+
+                        $("#txDestAddressLabel").text("STX Address");
+                        $("#txDestAddress").attr("href", data.stxaddressurl);
+                        $("#txDestAddress").text(data.stxaddress);
+                        $("#txDestTxIdLabel").text("STX TxID");
+                        $("#txDestTxId").attr("href", data.stxtxidurl);
+                        $("#txDestTxId").text(data.stxtxid);
+
+                        $("#txAmout").text(data.btcamount + " -> " + data.stxamount);
+                        $("#txFee").text(data.btcfee + ", " + data.stxfee);
+                    }
+                    else {
+                        $("#txOrigAddressLabel").text("STX Address");
+                        $("#txOrigAddress").attr("href", data.stxaddressurl);
+                        $("#txOrigAddress").text(data.stxaddress);
+                        $("#txOrigTxIdLabel").text("STX TxID");
+                        $("#txOrigTxId").attr("href", data.stxtxidurl);
+                        $("#txOrigTxId").text(data.stxtxid);
+
+                        $("#txDestAddressLabel").text("BTC Address");
+                        $("#txDestAddress").attr("href", data.btcaddressurl);
+                        $("#txDestAddress").text(data.btcaddress);
+                        $("#txDestTxIdLabel").text("BTC TxID");
+                        $("#txDestTxId").attr("href", data.btctxidurl);
+                        $("#txDestTxId").text(data.btctxid);
+
+                        $("#txAmout").text(data.stxamount + " -> " + data.btcamount);
+                        $("#txFee").text(data.stxfee + ", " + data.btcfee);
+                    }
+                    $("#txDate").text("Create at " + data.createat + ", latest udpate at " + data.updateat);
+                }).fail(function() {
+                    doError("Cannot get transactions informations.");
+                    $("#openModalBtn").prop("disabled", true);
+                });
 
                 return false;
             })
@@ -176,6 +226,30 @@ function loadSwapForm() {
         $("#destSelected").on("change", function (e) {
             $("#title").data("coin", ($(this).val() == "bitcoin") ? "bitcoin" : "stacks");
             $("#changeBtn").trigger("click");
+        });
+
+        $("#openModalBtn").on("click", function (e) {
+            e.preventDefault();
+    
+            let vOrigAmout = parseFloat($("#origAmount").val());
+    
+            if (vOrigAmout > 0) {
+    
+                vOrigAmout = Math.round(vOrigAmout * 100000) / 100000;
+                $(".modalOrigCoin").text(vOrigAmout + " BTC");
+    
+                let vDestAmout = parseFloat($("#destAmount").val());
+                vDestAmout = Math.round(vDestAmout * 100000) / 100000;
+                $(".modalDestCoin").text($("#destAmount").val() + " STX");
+    
+                $(".modalOrigAddr").text($("#PoolBtcAddress").val());
+                $(".modalDestAddr").text($("#stxAddress").val());
+    
+                $("#swapModal").modal("show");
+            }
+            else {
+                doError("Amount cant be empty.");
+            }
         });
 
         $("#confirmBtn").on("click", function (e) {
@@ -283,30 +357,6 @@ function loadSwapForm() {
     });
 
     $("#openModalBtn").prop("disabled", false);
-
-    $("#openModalBtn").on("click", function (e) {
-        e.preventDefault();
-
-        let vOrigAmout = parseFloat($("#origAmount").val());
-
-        if (vOrigAmout > 0) {
-
-            vOrigAmout = Math.round(vOrigAmout * 100000) / 100000;
-            $(".modalOrigCoin").text(vOrigAmout + " BTC");
-
-            let vDestAmout = parseFloat($("#destAmount").val());
-            vDestAmout = Math.round(vDestAmout * 100000) / 100000;
-            $(".modalDestCoin").text($("#destAmount").val() + " STX");
-
-            $(".modalOrigAddr").text($("#PoolBtcAddress").val());
-            $(".modalDestAddr").text($("#stxAddress").val());
-
-            $("#swapModal").modal("show");
-        }
-        else {
-            doError("Amount cant be empty.");
-        }
-    });
 
     $("#linkHome").on("click", function (e) {
         e.preventDefault();

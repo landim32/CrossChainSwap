@@ -58,6 +58,12 @@ namespace DB.Infra.Repository
             }
         }
 
+        public IEnumerable<ITransactionLogModel> ListById(long txId, ITransactionLogDomainFactory factory)
+        {
+            var rows = _ccsContext.TransactionLogs.Where(x => x.TxId == txId).OrderByDescending(x => x.Date).ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
         public IEnumerable<ITransactionLogModel> ListByBtcTx(string btcTx, ITransactionLogDomainFactory factory)
         {
             var rows = _ccsContext.TransactionLogs.Where(x => x.Tx.BtcTxid == btcTx).OrderByDescending(x => x.Date).ToList();

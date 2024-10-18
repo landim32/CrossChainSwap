@@ -40,20 +40,49 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Transaction</h5>
+                    <h5 id="txTransactionTitle" class="modal-title">Transaction ID ~</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <dl class="row">
-                        <dt class="col-sm-3">BTC Address</dt>
-                        <dd class="col-sm-9"><span id="txBtcAddress">~</span></dd>
-                      
-                        <dt class="col-sm-3">Term</dt>
-                        <dd class="col-sm-9">
-                          <p>Definition for the term.</p>
-                          <p>And some more placeholder definition text.</p>
-                        </dd>
+                        <dt class="col-sm-3">Status</dt>
+                        <dd class="col-sm-9"><span id="txStatus">~</span></dd>
+                        <dt class="col-sm-3" id="txOrigAddressLabel">~ Address</dt>
+                        <dd class="col-sm-9"><a id="txOrigAddress" href="#" target="_blank">~</a></dd>
+                        <dt class="col-sm-3" id="txOrigTxIdLabel">~ Transaction ID</dt>
+                        <dd class="col-sm-9"><a id="txOrigTxId" href="#" target="_blank">~</a></dd>
+                        <dt class="col-sm-3" id="txDestAddressLabel">~ Address</dt>
+                        <dd class="col-sm-9"><a id="txDestAddress" href="#" target="_blank">~</a></dd>
+                        <dt class="col-sm-3" id="txDestTxIdLabel">~ Transaction ID</dt>
+                        <dd class="col-sm-9"><a id="txDestTxId" href="#" target="_blank">~</a></dd>
+                        <dt class="col-sm-3">Amounts</dt>
+                        <dd class="col-sm-9"><a id="txAmout">~</a></dd>
+                        <dt class="col-sm-3">Fees</dt>
+                        <dd class="col-sm-9"><a id="txFee">~</a></dd>
+                        <dt class="col-sm-3">Dates</dt>
+                        <dd class="col-sm-9"><a id="txDate">~</a></dd>
                     </dl>
+                    <hr />
+                    <table id="tableTxLog" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

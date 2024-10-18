@@ -1,4 +1,7 @@
 ﻿using BTCSTXSwap.API.DTO;
+using BTCSTXSwap.Domain.Impl.Models;
+using BTCSTXSwap.Domain.Impl.Services;
+using BTCSTXSwap.Domain.Interfaces.Models;
 using BTCSTXSwap.Domain.Interfaces.Services;
 using BTCSTXSwap.DTO;
 using BTCSTXSwap.DTO.CoinMarketCap;
@@ -24,7 +27,7 @@ namespace BTCSTXSwap.API.Controllers
 
         public TransactionController(
             IUserService userService, 
-            ITransactionService txService, 
+            ITransactionService txService,
             IBitcoinService bitcoinService,
             IStacksService stacksService
         )
@@ -33,6 +36,31 @@ namespace BTCSTXSwap.API.Controllers
             _txService = txService;
             _bitcoinService = bitcoinService;
             _stacksService = stacksService;
+        }
+
+        private TxResult ModelToInfo(ITransactionModel md)
+        {
+            return new TxResult
+            {
+                TxId = md.TxId,
+                IntType = (int)md.Type,
+                TxType = md.Type == TransactionEnum.BtcToStx ? "BTC To STX" : "STX to BTC",
+                BtcAddress = md.BtcAddress,
+                BtcAddressUrl = (md.BtcAddress != null) ? _bitcoinService.GetAddressUrl(md.BtcAddress) : null,
+                StxAddress = md.StxAddress,
+                StxAddressUrl = (md.StxAddress != null) ? _stacksService.GetAddressUrl(md.StxAddress) : null,
+                CreateAt = md.CreateAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                UpdateAt = md.UpdateAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                Status = _txService.GetTransactionEnumToString(md.Status),
+                BtcTxid = md.BtcTxid,
+                BtcTxidUrl = !string.IsNullOrEmpty(md.BtcTxid) ? _bitcoinService.GetTransactionUrl(md.BtcTxid) : null,
+                StxTxid = md.StxTxid,
+                StxTxidUrl = !string.IsNullOrEmpty(md.StxTxid) ? _stacksService.GetTransactionUrl(md.StxTxid) : null,
+                BtcFee = md.BtcFee.HasValue ? _bitcoinService.ConvertToString(md.BtcFee.Value) : null,
+                StxFee = md.StxFee.HasValue ? _stacksService.ConvertToString(md.StxFee.Value) : null,
+                BtcAmount = md.BtcAmount.HasValue ? _bitcoinService.ConvertToString(md.BtcAmount.Value) : null,
+                StxAmount = md.StxAmount.HasValue ? _stacksService.ConvertToString(md.StxAmount.Value) : null
+            };
         }
 
         [HttpPut("createTx")]
@@ -69,28 +97,72 @@ namespace BTCSTXSwap.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
                 */
-                var ds = _txService.ListAll().Select(x => new TxResult
-                {
-                    TxId = x.TxId,
-                    IntType = (int) x.Type,
-                    TxType = x.Type == TransactionEnum.BtcToStx ? "BTC To STX" : "STX to BTC",
-                    BtcAddress = x.BtcAddress,
-                    BtcAddressUrl = (x.BtcAddress != null) ? _bitcoinService.GetAddressUrl(x.BtcAddress) : null,
-                    StxAddress = x.StxAddress,
-                    StxAddressUrl = (x.StxAddress != null) ? _stacksService.GetAddressUrl(x.StxAddress) : null,
-                    CreateAt = x.CreateAt.ToString("MM/dd/yyyy HH:mm:ss"),
-                    UpdateAt = x.UpdateAt.ToString("MM/dd/yyyy HH:mm:ss"),
-                    Status = _txService.GetTransactionEnumToString(x.Status),
-                    BtcTxid = x.BtcTxid,
-                    BtcTxidUrl = !string.IsNullOrEmpty(x.BtcTxid) ? _bitcoinService.GetTransactionUrl(x.BtcTxid) : null,
-                    StxTxid = x.StxTxid,
-                    StxTxidUrl = !string.IsNullOrEmpty(x.StxTxid) ? _stacksService.GetTransactionUrl(x.StxTxid) : null,
-                    BtcFee = x.BtcFee.HasValue ? _bitcoinService.ConvertToString(x.BtcFee.Value) : null,
-                    StxFee = x.StxFee.HasValue ? _stacksService.ConvertToString(x.StxFee.Value) : null,
-                    BtcAmount = x.BtcAmount.HasValue ? _bitcoinService.ConvertToString(x.BtcAmount.Value) : null,
-                    StxAmount = x.StxAmount.HasValue ? _stacksService.ConvertToString(x.StxAmount.Value) : null
-                }).ToList();
+                var ds = _txService.ListAll().Select(x => ModelToInfo(x)).ToList();
                 return new ActionResult<IList<TxResult>>(ds);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        private string GetLogTypeToStr(LogTypeEnum logType)
+        {
+            string str = string.Empty;
+            switch (logType) {
+                case LogTypeEnum.Information:
+                    str = "info";
+                    break;
+                case LogTypeEnum.Warning:
+                    str = "warning";
+                    break;
+                case LogTypeEnum.Error:
+                    str = "danger";
+                    break;
+            }
+            return str;
+        }
+
+        [HttpGet("listtransactionlog/{txid}")]
+        public ActionResult<IList<TxLogResult>> ListTransactionLog(long txid)
+        {
+            try
+            {
+                /*
+                var user = _userService.GetUserInSession(HttpContext);
+                if (user == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+                */
+                var ds = _txService.ListLogById(txid).Select(x => new TxLogResult
+                {
+                    LogType = GetLogTypeToStr(x.LogType),
+                    IntLogType = (int)x.LogType,
+                    Date = x.Date.ToString("MM/dd/yyyy HH:mm:ss"),
+                    Message = x.Message
+                }).ToList();
+                return new ActionResult<IList<TxLogResult>>(ds);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("gettransaction/{txid}")]
+        public ActionResult<TxResult> GetTransaction(long txid)
+        {
+            try
+            {
+                /*
+                var user = _userService.GetUserInSession(HttpContext);
+                if (user == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+                */
+                return ModelToInfo(_txService.GetTx(txid));
             }
             catch (Exception ex)
             {

@@ -124,6 +124,11 @@ namespace BTCSTXSwap.Domain.Impl.Services
             return _txFactory.BuildTransactionModel().ListAll(_txFactory);
         }
 
+        public IEnumerable<ITransactionLogModel> ListLogById(long txid)
+        {
+            return _txLogFactory.BuildTransactionLogModel().ListById(txid, _txLogFactory);
+        }
+
         public string GetTransactionEnumToString(TransactionStatusEnum status) {
             string str = string.Empty;
             switch (status)

@@ -17,6 +17,7 @@ namespace BTCSTXSwap.Domain.Interfaces.Models
         string Message { get; set; }
 
         ITransactionLogModel Insert();
+        IEnumerable<ITransactionLogModel> ListById(long logId, ITransactionLogDomainFactory factory);
         IEnumerable<ITransactionLogModel> GetByBtcTx(string txId, ITransactionLogDomainFactory factory);
         IEnumerable<ITransactionLogModel> GetByStxTx(string txId, ITransactionLogDomainFactory factory);
     }

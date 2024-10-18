@@ -31,6 +31,10 @@ namespace BTCSTXSwap.Domain.Impl.Models
         {
             return _repositoryTxLog.Insert(this);
         }
+        public IEnumerable<ITransactionLogModel> ListById(long logId, ITransactionLogDomainFactory factory)
+        {
+            return _repositoryTxLog.ListById(logId, factory);
+        }
         public IEnumerable<ITransactionLogModel> GetByBtcTx(string txId, ITransactionLogDomainFactory factory)
         {
             return _repositoryTxLog.ListByBtcTx(txId, factory);
