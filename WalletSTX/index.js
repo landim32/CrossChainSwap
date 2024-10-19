@@ -17,7 +17,7 @@ async function loadMnemonic() {
 }
 
 async function getPrivateKeyFromMnemonic(mnemonic) {
-    const wallet = await generateWallet({ secretKey: mnemonic });
+    const wallet = await generateWallet({ secretKey: mnemonic, password: "" });
     const account = wallet.accounts[0]; // Primeira conta derivada do mnemonic
     return account.stxPrivateKey;
 }
