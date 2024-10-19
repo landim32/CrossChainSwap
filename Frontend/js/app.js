@@ -1,4 +1,5 @@
-const API_URL = "https://localhost:44374";
+//const API_URL = "https://localhost:44374";
+const API_URL = "http://167.172.240.71:8080";
 
 let TX_ID, INTERVAL_ID = 0, COUNTER = 11;
 

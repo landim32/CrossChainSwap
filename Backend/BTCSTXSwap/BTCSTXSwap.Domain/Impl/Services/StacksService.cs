@@ -13,8 +13,11 @@ namespace BTCSTXSwap.Domain.Impl.Services
     public class StacksService: IStacksService
     {
         //private const string WALLET_API = "http://localhost:3000";
-        private const string WALLET_API = "http://172.18.0.4:3000";
-        private const string STACKS_API = "https://api.testnet.hiro.so/extended";
+        //private const string WALLET_API = "http://172.18.0.4:3000";
+        //private const string STACKS_API = "https://api.testnet.hiro.so/extended";
+
+        public static string WALLET_API { get; set; }
+        public static string STACKS_API { get; set; }
 
         public async Task<long> GetBalance(string stxAddress)
         {

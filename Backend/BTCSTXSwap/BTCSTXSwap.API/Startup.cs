@@ -31,7 +31,13 @@ namespace BTCSTXSwap.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Initializer.Configure(services, Configuration.GetConnectionString("CrossChainSwapContext"));
+            var config = new ConfigurationParam
+            {
+                ConnectionString = Configuration.GetConnectionString("CrossChainSwapContext"),
+                WalletStxApi = Configuration.GetSection("Stacks:WalletApi").Value,
+                StacksApi = Configuration.GetSection("Stacks:StacksApi").Value
+            };
+            Initializer.Configure(services, config);
             services.AddControllers();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>

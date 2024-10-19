@@ -15,12 +15,19 @@ namespace BTCSTXSwap.API.Controllers
     {
         private IUserService _userService;
         private IBitcoinService _bitcoinService;
+        private IStacksService _stacksService;
         private IMempoolService _mempoolService;
 
-        public PoolController(IUserService userService, IBitcoinService bitcoinService, IMempoolService mempoolService)
+        public PoolController(
+            IUserService userService, 
+            IBitcoinService bitcoinService,
+            IStacksService stacksService,
+            IMempoolService mempoolService
+        )
         {
             _userService = userService;
             _bitcoinService = bitcoinService;
+            _stacksService = stacksService;
             _mempoolService = mempoolService;
         }
 
@@ -36,11 +43,14 @@ namespace BTCSTXSwap.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
                 */
-                var poolAddr = _bitcoinService.GetPoolAddress();
+                var poolBtcAddr = _bitcoinService.GetPoolAddress();
+                var poolStxAddr = await _stacksService.GetPoolAddress();
                 return new PoolInfo()
                 {
-                    BtcAddress = poolAddr,
-                    BtcBalance = await _mempoolService.GetBalance(poolAddr)
+                    BtcAddress = poolBtcAddr,
+                    BtcBalance = await _mempoolService.GetBalance(poolBtcAddr),
+                    StxAddress = poolStxAddr,
+                    StxBalance = await _stacksService.GetBalance(poolStxAddr)
                 };
             }
             catch (Exception ex)

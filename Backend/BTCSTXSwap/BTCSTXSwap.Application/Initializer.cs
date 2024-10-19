@@ -31,12 +31,15 @@ namespace BTCSTXSwap.Application
             else
                 services.AddTransient(serviceType, implementationType);
         }
-        public static void Configure(IServiceCollection services, string connection, bool scoped = true)
+        public static void Configure(IServiceCollection services, ConfigurationParam config, bool scoped = true)
         {
-            if(scoped)
-                services.AddDbContext<CrossChainSwapContext>(x => x.UseLazyLoadingProxies().UseNpgsql(connection));
+            if (scoped)
+                services.AddDbContext<CrossChainSwapContext>(x => x.UseLazyLoadingProxies().UseNpgsql(config.ConnectionString));
             else
-                services.AddDbContextFactory<CrossChainSwapContext>(x => x.UseLazyLoadingProxies().UseNpgsql(connection));
+                services.AddDbContextFactory<CrossChainSwapContext>(x => x.UseLazyLoadingProxies().UseNpgsql(config.ConnectionString));
+
+            StacksService.WALLET_API = config.WalletStxApi;
+            StacksService.STACKS_API = config.StacksApi;
 
             #region Infra
             injectDependency(typeof(CrossChainSwapContext), typeof(CrossChainSwapContext), services, scoped);
