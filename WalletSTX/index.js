@@ -12,7 +12,7 @@ async function loadMnemonic() {
     }
     const mnemonic = fs.readFileSync(mnemonicFilePath, 'utf8');
     //const mnemonic = fs.readFileSync(mnemonicFilePath);
-    console.log('MNemonic:', mnemonic.trim());
+    //console.log('MNemonic:', mnemonic.trim());
     return mnemonic.trim();
 }
 
@@ -24,7 +24,7 @@ async function getPrivateKeyFromMnemonic(mnemonic) {
 
 async function getAddress() {
     const mnemonic = await loadMnemonic();
-    const wallet = await generateWallet({ secretKey: mnemonic });
+    const wallet = await generateWallet({ secretKey: mnemonic, password: "" });
     const account = wallet.accounts[0];
     const address = await getStxAddress({ account, transactionVersion: TransactionVersion.Testnet });
     console.log('Address:', address);
