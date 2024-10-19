@@ -39,6 +39,7 @@ namespace BTCSTXSwap.Domain.Impl.Core
             }
         }
 
+        /*
         public static void ChangeImageColor(Image<Rgba32> image, System.Drawing.Color newColor)
         {
             for (int y = 0; y < image.Height; y++)
@@ -96,5 +97,6 @@ namespace BTCSTXSwap.Domain.Impl.Core
             }
 
         }
+        */
     }
 }

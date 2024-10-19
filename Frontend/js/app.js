@@ -1,5 +1,23 @@
 const API_URL = "https://localhost:44374";
 
+let TX_ID, INTERVAL_ID = 0, COUNTER = 11;
+
+$('#txModal').on('hidden.bs.modal', function () {
+    COUNTER = 10;
+    if (INTERVAL_ID > 0) {
+        clearInterval(INTERVAL_ID);
+    }
+});
+
+function refreshTx() {
+    $("#txRefresh").text("(refresh in " + COUNTER + "s)");
+    if (COUNTER <= 0) {
+        COUNTER = 10;
+        reloadTx();
+    }
+    COUNTER--;
+}
+
 function doError(msg) {
     $("#errorBox span").text(msg);
     $("#errorBox").show();
@@ -73,13 +91,80 @@ function loadPoolInfo() {
     });
 }
 
+function reloadTx() {
+    $.getJSON( API_URL + "/api/Transaction/gettransaction/" + TX_ID, function( data ) {
+        $("#txTransactionTitle").text("Transaction " + data.txtype + " #" + data.txid);
+        $("#txStatus").text(data.status);
+        if (data.inttype == 1) {
+            $("#txOrigAddressLabel").text("BTC Address");
+            $("#txOrigAddress").attr("href", data.btcaddressurl);
+            $("#txOrigAddress").text(data.btcaddress);
+            $("#txOrigTxIdLabel").text("BTC TxID");
+            $("#txOrigTxId").attr("href", data.btctxidurl);
+            $("#txOrigTxId").text(data.btctxid);
+
+            $("#txDestAddressLabel").text("STX Address");
+            $("#txDestAddress").attr("href", data.stxaddressurl);
+            $("#txDestAddress").text(data.stxaddress);
+            $("#txDestTxIdLabel").text("STX TxID");
+            $("#txDestTxId").attr("href", data.stxtxidurl);
+            $("#txDestTxId").text(data.stxtxid);
+
+            $("#txAmout").text(data.btcamount + " -> " + data.stxamount);
+            $("#txFee").text(data.btcfee + ", " + data.stxfee);
+        }
+        else {
+            $("#txOrigAddressLabel").text("STX Address");
+            $("#txOrigAddress").attr("href", data.stxaddressurl);
+            $("#txOrigAddress").text(data.stxaddress);
+            $("#txOrigTxIdLabel").text("STX TxID");
+            $("#txOrigTxId").attr("href", data.stxtxidurl);
+            $("#txOrigTxId").text(data.stxtxid);
+
+            $("#txDestAddressLabel").text("BTC Address");
+            $("#txDestAddress").attr("href", data.btcaddressurl);
+            $("#txDestAddress").text(data.btcaddress);
+            $("#txDestTxIdLabel").text("BTC TxID");
+            $("#txDestTxId").attr("href", data.btctxidurl);
+            $("#txDestTxId").text(data.btctxid);
+
+            $("#txAmout").text(data.stxamount + " -> " + data.btcamount);
+            $("#txFee").text(data.stxfee + ", " + data.btcfee);
+        }
+        $("#txDate").text("Create at " + data.createat + ", latest udpate at " + data.updateat);
+    }).fail(function() {
+        alert("Cannot get transactions informations.");
+    });
+
+    $.getJSON( API_URL + "/api/Transaction/listtransactionlog/" + TX_ID, function( data ) {
+        $("#tableTxLog > tbody").empty();
+        data.forEach(function(item) {
+            let logTypeAlert = "<span class=\"badge rounded-pill text-bg-info\">Info</span>";
+            if (item.intlogtype == 2) {
+                logTypeAlert = "<span class=\"badge rounded-pill text-bg-warning\">Warning</span>";
+            }
+            else if (item.intlogtype == 3) {
+                logTypeAlert = "<span class=\"badge rounded-pill text-bg-danger\">Error</span>";
+            }
+            let rowStr = 
+                "<tr>\n" +
+                "<td>" + item.date + "</td>\n" +
+                "<td>" + logTypeAlert + "</td>\n" +
+                "<td>" + item.message + "</td>\n" +
+                "</tr>";
+            $('#tableTxLog > tbody:last-child').append(rowStr);
+        });
+    }).fail(function() {
+        alert("Cannot get transactions log informations.");
+    });
+}
+
 function loadAllSwaps() {
     $("#mainContainer").load("./list.html", function () {
 
         //$("#tableTx > tbody").empty();        
 
         $.getJSON( API_URL + "/api/Transaction/listalltransactions", function( data ) {
-            //alert(JSON.stringify(data));
             $("#tableTx > tbody").empty();
             data.forEach(function(item) {
                 let userAddr = ((item.inttype == 1) ? item.btcaddress : item.stxaddress);
@@ -103,59 +188,16 @@ function loadAllSwaps() {
 
                 $("#txModal").modal("show");
 
-                let txId = $(this).data("txid");
+                TX_ID = $(this).data("txid");
 
-                $.getJSON( API_URL + "/api/Transaction/gettransaction/" + txId, function( data ) {
-                    //alert(JSON.stringify(data));
-                    $("#txTransactionTitle").text("Transaction " + data.txtype + " #" + data.txid);
-                    $("#txStatus").text(data.status);
-                    if (data.inttype == 1) {
-                        $("#txOrigAddressLabel").text("BTC Address");
-                        $("#txOrigAddress").attr("href", data.btcaddressurl);
-                        $("#txOrigAddress").text(data.btcaddress);
-                        $("#txOrigTxIdLabel").text("BTC TxID");
-                        $("#txOrigTxId").attr("href", data.btctxidurl);
-                        $("#txOrigTxId").text(data.btctxid);
+                reloadTx();
 
-                        $("#txDestAddressLabel").text("STX Address");
-                        $("#txDestAddress").attr("href", data.stxaddressurl);
-                        $("#txDestAddress").text(data.stxaddress);
-                        $("#txDestTxIdLabel").text("STX TxID");
-                        $("#txDestTxId").attr("href", data.stxtxidurl);
-                        $("#txDestTxId").text(data.stxtxid);
-
-                        $("#txAmout").text(data.btcamount + " -> " + data.stxamount);
-                        $("#txFee").text(data.btcfee + ", " + data.stxfee);
-                    }
-                    else {
-                        $("#txOrigAddressLabel").text("STX Address");
-                        $("#txOrigAddress").attr("href", data.stxaddressurl);
-                        $("#txOrigAddress").text(data.stxaddress);
-                        $("#txOrigTxIdLabel").text("STX TxID");
-                        $("#txOrigTxId").attr("href", data.stxtxidurl);
-                        $("#txOrigTxId").text(data.stxtxid);
-
-                        $("#txDestAddressLabel").text("BTC Address");
-                        $("#txDestAddress").attr("href", data.btcaddressurl);
-                        $("#txDestAddress").text(data.btcaddress);
-                        $("#txDestTxIdLabel").text("BTC TxID");
-                        $("#txDestTxId").attr("href", data.btctxidurl);
-                        $("#txDestTxId").text(data.btctxid);
-
-                        $("#txAmout").text(data.stxamount + " -> " + data.btcamount);
-                        $("#txFee").text(data.stxfee + ", " + data.btcfee);
-                    }
-                    $("#txDate").text("Create at " + data.createat + ", latest udpate at " + data.updateat);
-                }).fail(function() {
-                    doError("Cannot get transactions informations.");
-                    $("#openModalBtn").prop("disabled", true);
-                });
+                INTERVAL_ID = setInterval(refreshTx, 1000);
 
                 return false;
             })
         }).fail(function() {
-            doError("Cannot get transactions informations.");
-            $("#openModalBtn").prop("disabled", true);
+            alert("Cannot get transactions informations.");
         });
     });
 }

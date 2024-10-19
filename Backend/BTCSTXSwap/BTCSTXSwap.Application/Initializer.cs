@@ -1,5 +1,4 @@
-﻿using Cloud.Infra;
-using Core.Domain;
+﻿using Core.Domain;
 using Core.Domain.Cloud;
 using Core.Domain.Repository;
 using DB.Infra;
@@ -43,7 +42,6 @@ namespace BTCSTXSwap.Application
             injectDependency(typeof(CrossChainSwapContext), typeof(CrossChainSwapContext), services, scoped);
             injectDependency(typeof(IUnitOfWork), typeof(UnitOfWork), services, scoped);
             injectDependency(typeof(ILogCore), typeof(LogCore), services, scoped);
-            services.AddSingleton(typeof(IAssetsProviders), typeof(AssetsProvider));
             #endregion
 
             #region Repository
