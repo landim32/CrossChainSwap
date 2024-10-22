@@ -20,6 +20,8 @@ interface ISwapProvider {
     stxPoolAddress: string;
     btcPoolBalance: BigInt;
     stxPoolBalance: BigInt;
+    getFormatedOrigAmount: () => string;
+    getFormatedDestAmount: () => string;
     getFormatedOrigPrice: () => string;
     getFormatedDestPrice: () => string;
     getFormatedOrigBalance: () => string;
@@ -30,6 +32,7 @@ interface ISwapProvider {
     getCoinText: () => string;
     loadPoolInfo: () => Promise<ProviderResult>;
     loadCurrentPrice: () => Promise<ProviderResult>;
+    execute: () => Promise<ProviderResult>;
 }
 
 export default ISwapProvider;

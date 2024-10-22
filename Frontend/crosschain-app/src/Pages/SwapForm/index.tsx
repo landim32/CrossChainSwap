@@ -6,13 +6,16 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AuthContext from '../../Contexts/Auth/AuthContext';
 import SwapContext from '../../Contexts/Swap/SwapContext';
 import { CoinEnum } from '../../DTO/Enum/CoinEnum';
-import SwapModal from '../../Components/SwapModal';
+import Modal from 'react-bootstrap/Modal';
 
 export default function SwapForm() {
+
+    const [showModal, setShowModal] = useState<boolean>(false);
+
     const swapContext = useContext(SwapContext);
     useEffect(() => {
         swapContext.loadPoolInfo();
@@ -21,6 +24,41 @@ export default function SwapForm() {
 
     return (
         <Container>
+    <Modal
+      show={showModal}
+      size="lg"
+      onHide={() => {setShowModal(false)}}
+      backdrop="static"
+      keyboard={false}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Confirm Swap</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>You are about to make a conversion of <strong>{swapContext.getFormatedOrigAmount()}</strong> into <strong>{swapContext.getFormatedDestAmount()}</strong>.</p>
+        <p><strong>{swapContext.getFormatedOrigAmount()}</strong> -&gt; <span>{
+        (swapContext.origCoin == CoinEnum.Bitcoin) ? 
+            swapContext.btcPoolAddress : 
+            swapContext.stxPoolAddress 
+        }</span> (Pool Address)</p>
+        <p>As soon as the transaction reaches <strong>confirmation</strong> the transfer of
+          <strong>{swapContext.getFormatedDestAmount()}</strong> will be initiated to the address provided by your Leather Wallet:
+        </p>
+        <p><strong>{swapContext.getFormatedDestAmount()}</strong> -&gt; <span>{
+        (swapContext.destCoin == CoinEnum.Bitcoin) ? 
+            swapContext.btcPoolAddress : 
+            swapContext.stxPoolAddress 
+        }</span> (Your Wallet Address)</p>
+        <p>A fee of <strong>230 satoshis</strong> will be charged, please confirm if you agree.</p>
+        <p>Do you confirm this transaction?</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => {setShowModal(false)}}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={() => {}}>Confirm Swap</Button>
+      </Modal.Footer>
+    </Modal>
             <Row>
                 <Col md="6" className='offset-md-3'>
                     <Card>
@@ -122,10 +160,11 @@ export default function SwapForm() {
                             <Row>
                                 <Col md="4" className='offset-md-4'>
                                     <view className='d-grid gap-2'>
-                                        <Button size="lg" variant="primary">
+                                        <Button size="lg" variant="primary" onClick={() => {
+                                            setShowModal(true);
+                                        }}>
                                             <FontAwesomeIcon icon={faRetweet} /> Swap
                                         </Button>
-                                        <SwapModal></SwapModal>
                                     </view>
                                 </Col>
                             </Row>

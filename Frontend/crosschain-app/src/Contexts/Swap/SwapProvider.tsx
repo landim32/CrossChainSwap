@@ -46,6 +46,28 @@ export default function SwapProvider(props: any) {
         stxPoolAddress: stxPoolAddress,
         btcPoolBalance: btcPoolBalance,
         stxPoolBalance: stxPoolBalance,
+        getFormatedOrigAmount: () => {
+            if (origAmount) {
+                if (origCoin == CoinEnum.Bitcoin) {
+                    return Number(origAmount).toFixed(5).toString() + " BTC";
+                }
+                else {
+                    return Number(origAmount).toFixed(5).toString() + " STX";
+                }
+            }
+            return "~";
+        },
+        getFormatedDestAmount: () => {
+            if (destAmount) {
+                if (destCoin == CoinEnum.Bitcoin) {
+                    return Number(destAmount).toFixed(5).toString() + " BTC";
+                }
+                else {
+                    return Number(destAmount).toFixed(5).toString() + " STX";
+                }
+            }
+            return "~";
+        },
         setOrigCoin: (value: CoinEnum) => {
             _setOrigCoin(value);
             if (value == CoinEnum.Bitcoin) {
@@ -93,7 +115,7 @@ export default function SwapProvider(props: any) {
             else {
                 let price = stxProportion * value;
                 _setDestAmount(parseFloat(price.toFixed(5)));
-            } 
+            }
         },
         getFormatedOrigPrice: () => {
             if (origCoin == CoinEnum.Bitcoin) {
@@ -228,6 +250,11 @@ export default function SwapProvider(props: any) {
                     mensagemErro: JSON.stringify(err)
                 };
             }
+        },
+        execute: async () => {
+            let ret: Promise<ProviderResult>;
+            
+            return ret;
         }
     };
 
