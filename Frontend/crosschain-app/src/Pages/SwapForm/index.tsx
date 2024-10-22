@@ -6,11 +6,17 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import AuthContext from '../../Contexts/Auth/AuthContext';
+import SwapContext from '../../Contexts/Swap/SwapContext';
+import { CoinEnum } from '../../DTO/Enum/CoinEnum';
 
 export default function SwapForm() {
-    const authContext = useContext(AuthContext);
+    const swapContext = useContext(SwapContext);
+    useEffect(() => {
+        swapContext.loadPoolInfo();
+        swapContext.loadCurrentPrice();
+      }, []);
 
     return (
         <Container>
@@ -25,28 +31,34 @@ export default function SwapForm() {
                                         <Col md="6">
                                             <Form.Group as={Col} controlId="OrigAmount">
                                                 <Form.Label>From</Form.Label>
-                                                <Form.Select aria-label="Default select example">
-                                                    <option selected value="bitcoin">Bitcoin</option>
-                                                    <option value="stacks">Stacks</option>
+                                                <Form.Select value={swapContext.origCoin} onChange={(e) => {
+                                                    if (e.target.value == '1') {
+                                                        swapContext.setOrigCoin(CoinEnum.Bitcoin);
+                                                    }
+                                                    else {
+                                                        swapContext.setOrigCoin(CoinEnum.Stacks);
+                                                    }
+                                                }}>
+                                                    <option value={CoinEnum.Bitcoin}>Bitcoin</option>
+                                                    <option value={CoinEnum.Stacks}>Stacks</option>
                                                 </Form.Select>
-                                                <Form.Text id="passwordHelpBlock" muted>
-                                                    Price: ~
-                                                </Form.Text>
+                                                <Form.Text muted>Price: {swapContext.getFormatedOrigPrice()}</Form.Text>
                                             </Form.Group>
                                         </Col>
                                         <Col md="6">
-                                            <Form.Label htmlFor="inputPassword5">Amount:</Form.Label>
-                                            <Form.Group as={Col} controlId="OrigAmount">
+                                            <Form.Label htmlFor="origAmount">Amount:</Form.Label>
+                                            <Form.Group as={Col}>
                                                 <Form.Control
                                                     type="number"
                                                     step="0.1"
                                                     style={{textAlign: 'right'}}
                                                     id="origAmount"
-                                                    aria-describedby="passwordHelpBlock"
+                                                    value={swapContext.origAmount}
+                                                    onChange={(e) => {
+                                                        swapContext.setOrigAmount(parseFloat(e.target.value));
+                                                    }}
                                                 />
-                                                <Form.Text id="passwordHelpBlock" muted>
-                                                    Pool Balance ~
-                                                </Form.Text>
+                                                <Form.Text muted>Pool Balance ~</Form.Text>
                                             </Form.Group>
                                         </Col>
                                     </Row>
@@ -71,20 +83,17 @@ export default function SwapForm() {
                                                     <option value="bitcoin">Bitcoin</option>
                                                     <option selected value="stacks">Stacks</option>
                                                 </Form.Select>
-                                                <Form.Text id="passwordHelpBlock" muted>
-                                                    Price: ~
-                                                </Form.Text>
+                                                <Form.Text muted>Price: {swapContext.getFormatedDestPrice()}</Form.Text>
                                             </Form.Group>
                                         </Col>
                                         <Col md="6">
-                                            <Form.Label htmlFor="inputPassword5">Amount:</Form.Label>
-                                            <Form.Group as={Col} controlId="OrigAmount">
+                                            <Form.Label htmlFor="destAmount">Amount:</Form.Label>
+                                            <Form.Group as={Col}>
                                                 <Form.Control
                                                     type="text"
                                                     id="destAmount"
                                                     readOnly={true}
                                                     style={{textAlign: 'right'}}
-                                                    aria-describedby="passwordHelpBlock"
                                                 />
                                                 <Form.Text id="passwordHelpBlock" muted>
                                                     Pool Balance ~

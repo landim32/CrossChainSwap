@@ -17,8 +17,6 @@ const AuthBusiness : IAuthBusiness = {
     var ret: BusinessResult<boolean>;
     const appConfig = new AppConfig(['store_write', 'publish_data']);
     const userSession = new UserSession({ appConfig });
-    //console.log(userSession);
-    //localStorage.setItem(LS_KEY, JSON.stringify(authSession));
     showConnect({
       userSession, // `userSession` from previous step, to access storage
       appDetails: {
@@ -29,21 +27,13 @@ const AuthBusiness : IAuthBusiness = {
         if (callback) {
           callback();
         }
-        /*
-        return {
-          ...ret,
-          sucesso: true,
-          dataResult: true,
-        };
-        */
       },
       onCancel: () => {
-        console.log('oops'); // WHEN user cancels/closes pop-up
+        console.log('oops'); 
       },
     });
   },
   logOut: () => {
-    //localStorage.removeItem(LS_KEY);
     disconnect();
   },
   getSession: async () => {
@@ -102,7 +92,7 @@ const AuthBusiness : IAuthBusiness = {
     }
     let chainId = await web3.eth.net.getId();
     /*
-    if(chainId != parseInt(process.env.REACT_APP_NETWORK)) {
+    if(chainId != parseInt(env.REACT_APP_NETWORK)) {
       return {
         ...ret,
         sucesso: false,

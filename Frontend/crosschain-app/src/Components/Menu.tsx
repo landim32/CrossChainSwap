@@ -13,7 +13,7 @@ export default function Menu() {
     authContext.loadUserSession();
   }, []);
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
+    <Navbar expand="lg" className="bg-body-tertiary mb-3">
       <Container>
         <Navbar.Brand href="#home">Cross Chain Swap</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

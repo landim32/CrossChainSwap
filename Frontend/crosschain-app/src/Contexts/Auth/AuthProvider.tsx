@@ -4,48 +4,21 @@ import IAuthProvider from '../../DTO/Contexts/IAuthProvider';
 import AuthContext from './AuthContext';
 import AuthFactory from '../../Business/Factory/AuthFactory';
 import { AuthSession } from '../../DTO/Domain/AuthSession';
-//import InicioContext from '../inicio/InicioContext';
-//import SelectedRoute from '../../dto/enum/SelectedRoute';
 
 export default function AuthProvider(props : any) {
 
   const [loading, setLoading] = useState(false);
   const [sessionInfo, setSessionInfo] = useState<AuthSession>(null);
-  //const inicioContext = useContext(InicioContext);
 
   const authProviderValue: IAuthProvider = {
-    /*
-    bindMetaMaskWallet: async (name: string, email: string, fromReferralCode: string) => {
-      let ret: Promise<ProviderResult>;
-      setLoading(true);
-      let bindResult = await AuthFactory.AuthBusiness.bindMetaMaskWallet(name, email, fromReferralCode);
-      setLoading(false);
-      if (!bindResult.sucesso) {
-        return {
-          ...ret,
-          sucesso: false,
-          mensagemErro: bindResult.mensagem
-        };
-      }
-      return {
-        ...ret,
-        sucesso: true
-      };
-    },
-    */
     loading: loading,
-    login: (callback?: any) => {
-      setLoading(true);
-      //let session = await AuthFactory.AuthBusiness.getSession();
-      //console.log("session:", session);
+    login: (callback?: any) => {;
       AuthFactory.AuthBusiness.logIn(callback);
-      setLoading(false);
     },
     logout: function (): ProviderResult {
       try {
         AuthFactory.AuthBusiness.logOut();
         setSessionInfo(null);
-        //inicioContext.setSelectedFlow(SelectedRoute.StartFlow);
         return {
           sucesso: true,
           mensagemErro: "",
@@ -73,9 +46,8 @@ export default function AuthProvider(props : any) {
     },
     loadUserSession: async () => {
       let session = await AuthFactory.AuthBusiness.getSession();
-      //console.log("session:", session);
       if (session.sucesso) {
-        console.log(session.dataResult);
+        //console.log(session.dataResult);
         setSessionInfo(session.dataResult);
       }
     },

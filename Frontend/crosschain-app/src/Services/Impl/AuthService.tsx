@@ -12,7 +12,7 @@ const AuthService : IAuthService = {
     getAuthHash: async (publicAdddress: string) => {
         let ret: AuthResult;
         console.log(publicAdddress);
-        let url = "api/Auth/" + publicAdddress;
+        let url = "/api/Auth/" + publicAdddress;
         let request = await _httpClient.doGet<AuthResult>(url, {});
         if (request.success) {
             return request.data;
@@ -29,7 +29,7 @@ const AuthService : IAuthService = {
     checkUserRegister: async (publicAdddress: string) => {
         let ret: AuthResult;
         console.log(publicAdddress);
-        let request = await _httpClient.doGet<AuthResult>("api/Auth/checkUserRegister/" + publicAdddress, {});
+        let request = await _httpClient.doGet<AuthResult>("/api/Auth/checkUserRegister/" + publicAdddress, {});
         if (request.success) {
             return request.data;
         }

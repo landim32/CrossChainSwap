@@ -4,8 +4,7 @@ import Menu from "./Components/Menu";
 import SwapForm from './Pages/SwapForm';
 import ContextBuilder from './Contexts/Utils/ContextBuilder';
 import AuthProvider from './Contexts/Auth/AuthProvider';
-import { useContext, useEffect } from 'react';
-import AuthContext from './Contexts/Auth/AuthContext';
+import SwapProvider from './Contexts/Swap/SwapProvider';
 
 function MySwaps() {
   return (
@@ -34,29 +33,14 @@ function Error404() {
 function Layout() {
   return (
     <div>
-      {/* A "layout route" is a good place to put markup you want to
-          share across all the pages on your site, like navigation. */}
       <Menu />
-
-      <hr />
-
-      {/* An <Outlet> renders whatever child route is currently active,
-          so you can think about this <Outlet> as a placeholder for
-          the child routes we defined above. */}
       <Outlet />
     </div>
   );
 }
 
 function App() {
-  const ContextContainer = ContextBuilder([AuthProvider]);
-
-  /*
-  const authContext = useContext(AuthContext);
-  useEffect(() => {
-    authContext.loadUserSession();
-  }, []);
-  */
+  const ContextContainer = ContextBuilder([AuthProvider, SwapProvider]);
 
   return (
     <ContextContainer>
