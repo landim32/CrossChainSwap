@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <UserSecretsId>c8dba4a6-691e-49a3-9dc5-660ceee25458</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DTOs\**" />
+    <Content Remove="DTOs\**" />
+    <EmbeddedResource Remove="DTOs\**" />
+    <None Remove="DTOs\**" />
+    <None Remove="DTO\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NoChainSwap.Application\NoChainSwap.Application.csproj" />
+    <ProjectReference Include="..\NoChainSwap.Domain\NoChainSwap.Domain.csproj" />
+    <ProjectReference Include="..\NoChainSwap.DTO\NoChainSwap.DTO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\OriginalController.cs" />
+  </ItemGroup>
+</Project>
