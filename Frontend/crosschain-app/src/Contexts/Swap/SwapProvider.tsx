@@ -5,11 +5,15 @@ import ISwapProvider from '../../DTO/Contexts/ISwapProvider';
 import PoolFactory from '../../Business/Factory/PoolFactory';
 import { CoinEnum } from '../../DTO/Enum/CoinEnum';
 import PriceFactory from '../../Business/Factory/PriceFactory';
+import TxFactory from '../../Business/Factory/TxFactory';
+import TxParamInfo from '../../DTO/Domain/TxParamInfo';
+import AuthFactory from '../../Business/Factory/AuthFactory';
 
 export default function SwapProvider(props: any) {
 
     const [loadingPoolInfo, setLoadingPoolInfo] = useState(false);
     const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+    const [loadingExecute, setLoadingExecute] = useState<boolean>(false);
     const [origCoin, _setOrigCoin] = useState<CoinEnum>(CoinEnum.Bitcoin);
     const [destCoin, _setDestCoin] = useState<CoinEnum>(CoinEnum.Stacks);
     const [btcMinPrice, setBtcMinPrice] = useState<number>(0);
@@ -26,6 +30,7 @@ export default function SwapProvider(props: any) {
     const [stxPoolAddress, setStxPoolAddress] = useState<string>(null);
     const [btcPoolBalance, setBtcPoolBalance] = useState<BigInt>(BigInt(0));
     const [stxPoolBalance, setStxPoolBalance] = useState<BigInt>(BigInt(0));
+    const [currentTxId, setCurrentTxId] = useState<string>(null);
 
     const swapProviderValue: ISwapProvider = {
         loadingPoolInfo: loadingPoolInfo,
@@ -46,6 +51,7 @@ export default function SwapProvider(props: any) {
         stxPoolAddress: stxPoolAddress,
         btcPoolBalance: btcPoolBalance,
         stxPoolBalance: stxPoolBalance,
+        currentTxId: currentTxId,
         getFormatedOrigAmount: () => {
             if (origAmount) {
                 if (origCoin == CoinEnum.Bitcoin) {
@@ -251,9 +257,57 @@ export default function SwapProvider(props: any) {
                 };
             }
         },
-        execute: async () => {
+        execute: async (callback: any) => {
             let ret: Promise<ProviderResult>;
-            
+            setLoadingExecute(true);
+            let retSession = await AuthFactory.AuthBusiness.getSession();
+            if (!retSession.sucesso) {
+                let retErro = {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: retSession.mensagem
+                };
+                setLoadingExecute(false);
+                callback(retErro);
+                return;
+            }
+            let userSession = retSession.dataResult;
+            if (origCoin == CoinEnum.Bitcoin) {
+                let amount = parseInt((origAmount * 100000000).toFixed(0));
+                window.transferBitcoin(btcPoolAddress, amount, "testnet", (txid: string) => {
+                    setCurrentTxId(txid);
+                    let param: TxParamInfo = {
+                        btcToStx: true,
+                        btcAddress: userSession.btcAddress,
+                        stxAddress: userSession.stxAddress,
+                        btcAmount: amount,
+                        btcTxid: txid
+                    }
+                    TxFactory.TxBusiness.createTx(param).then((ret) => {
+                        if (ret.sucesso) {
+                            let retSuccess = {
+                                ...ret,
+                                sucesso: true,
+                                mensagemSucesso: "Transaction started successfully"
+                            };
+                            setLoadingExecute(false);
+                            callback(retSuccess);
+                        }
+                        else {
+                            let retErro = {
+                                ...ret,
+                                sucesso: false,
+                                mensagemErro: ret.mensagem
+                            };
+                            setLoadingExecute(false);
+                            callback(retErro);
+                        }
+                    });
+                });
+            }
+            else {
+                // transaction in STX
+            }
             return ret;
         }
     };

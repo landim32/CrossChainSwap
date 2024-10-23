@@ -26,7 +26,42 @@
     -->
     <title>React App</title>
     <script id="react-dotenv" src="./env.js"></script>
+    <script>
+      function transferBitcoin(address, amount, network, callback) {
+        if (!window.LeatherProvider) {
+          alert(
+            "LeatherProvider not found. Install the Leather extension from leather.io/install."
+          );
+          return;
+        }
+        alert(amount);
+        try {
+          window.LeatherProvider.request("sendTransfer", {
+            recipients: [
+              {
+                address: address,
+                amount: amount,
+              },
+            ],
+            network: network,
+          }).then(function (response) {
+            alert(response.result.txid);
+            callback(response.result.txid);
+            console.log("Transaction ID:", response.result.txid);
+          });
+        } catch (error) {
+          alert(
+            "Request error: " +
+              error.error.message +
+              "(" +
+              error.error.code +
+              ")"
+          );
+        }
+      }
+    </script>
   </head>
+
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>

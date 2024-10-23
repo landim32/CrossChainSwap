@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import { HttpClient } from '../Infra/Impl/HttpClient';
 import IHttpClient from '../Infra/Interface/IHttpClient';
 import { IAuthService } from './Interfaces/IAuthService';
@@ -6,7 +7,8 @@ import { IPoolService } from './Interfaces/IPoolService';
 import { PoolService } from './Impl/PoolService';
 import { IPriceService } from './Interfaces/IPriceService';
 import { PriceService } from './Impl/PriceService';
-import env from 'react-dotenv';
+import { ITxService } from './Interfaces/ITxService';
+import { TxService } from './Impl/TxService';
 
 const httpClientAuth : IHttpClient = HttpClient();
 httpClientAuth.init(env.API_BASE_URL);
@@ -20,10 +22,14 @@ poolServiceImpl.init(httpClientAuth);
 const priceServiceImpl : IPriceService = PriceService;
 priceServiceImpl.init(httpClientAuth);
 
+const txServiceImpl : ITxService = TxService;
+txServiceImpl.init(httpClientAuth);
+
 const ServiceFactory = {
   AuthService: authServiceImpl,
   PoolService: poolServiceImpl,
   PriceService: priceServiceImpl,
+  TxService: txServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }
