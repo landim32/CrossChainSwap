@@ -142,5 +142,39 @@ namespace DB.Infra.Repository
                 throw;
             }
         }
+
+        public ITransactionModel GetByBtcTxId(string txid, ITransactionDomainFactory factory)
+        {
+            try
+            {
+                var row = _ccsContext.Transactions.Where(x => x.BtcTxid == txid).FirstOrDefault();
+                if (row != null)
+                {
+                    return DbToModel(factory, row);
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ITransactionModel GetByStxTxId(string txid, ITransactionDomainFactory factory)
+        {
+            try
+            {
+                var row = _ccsContext.Transactions.Where(x => x.StxTxid == txid).FirstOrDefault();
+                if (row != null)
+                {
+                    return DbToModel(factory, row);
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

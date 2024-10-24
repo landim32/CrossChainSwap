@@ -15,6 +15,7 @@ const TxBusiness: ITxBusiness = {
     try {
       let ret: BusinessResult<boolean> = null;
       let retServ = await _txService.createTx(param);
+      
       if (retServ.sucesso) {
         return {
           ...ret,

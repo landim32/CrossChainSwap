@@ -36,6 +36,14 @@ namespace NoChainSwap.Domain.Impl.Models
         public long? BtcAmount { get; set; }
         public long? StxAmount { get; set; }
 
+        public ITransactionModel GetByBtcTxId(string txid, ITransactionDomainFactory factory)
+        {
+            return _repositoryTx.GetByBtcTxId(txid, factory);
+        }
+        public ITransactionModel GetByStxTxId(string txid, ITransactionDomainFactory factory)
+        {
+            return _repositoryTx.GetByStxTxId(txid, factory);
+        }
         public ITransactionModel GetByBtcAddr(string btcAddr, ITransactionDomainFactory factory)
         {
             return _repositoryTx.GetByBtcAddr(btcAddr, factory);

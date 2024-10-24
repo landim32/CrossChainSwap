@@ -19,9 +19,11 @@ namespace NoChainSwap.DTO.Transaction
         public string BtcTxid { get; set; }
         [JsonPropertyName("stxTxid")]
         public string StxTxid { get; set; }
+        /*
         [JsonPropertyName("btcAmount")]
         public long? BtcAmount { get; set; }
         [JsonPropertyName("stxAmount")]
         public long? StxAmount { get; set; }
+        */
     }
 }

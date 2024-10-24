@@ -83,7 +83,7 @@ export default function ListTxPage() {
                                     txContext.txInfo?.btcaddress
                             }</a></dd>
                         {
-                            (txContext.txInfo?.inttype == 1 ? txContext.txInfo?.stxtxid : txContext.txInfo?.btctxid) ??
+                            (txContext.txInfo?.inttype == 1 ? txContext.txInfo?.stxtxid : txContext.txInfo?.btctxid) &&
                             <>
                                 <dt className="col-sm-3">{
                                     txContext.txInfo?.inttype == 1 ? "STX TxID" : "BTC TxID"

@@ -28,6 +28,8 @@ namespace NoChainSwap.Domain.Interfaces.Models
         ITransactionModel Update();
         ITransactionModel GetByBtcAddr(string btcAddr, ITransactionDomainFactory factory);
         ITransactionModel GetById(long txId, ITransactionDomainFactory factory);
+        ITransactionModel GetByBtcTxId(string txid, ITransactionDomainFactory factory);
+        ITransactionModel GetByStxTxId(string txid, ITransactionDomainFactory factory);
         IEnumerable<ITransactionModel> ListByBtcAddr(string btcAddr, ITransactionDomainFactory factory);
         IEnumerable<ITransactionModel> ListByStatus(IList<int> status, ITransactionDomainFactory factory);
         IEnumerable<ITransactionModel> ListAll(ITransactionDomainFactory factory);

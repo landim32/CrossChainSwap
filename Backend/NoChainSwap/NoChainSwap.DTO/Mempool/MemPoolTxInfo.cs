@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NoChainSwap.DTO.Mempool
 {
-    public class TxInfo
+    public class MemPoolTxInfo
     {
         [JsonProperty("txid")]
         public string TxId { get; set; }

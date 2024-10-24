@@ -8,6 +8,8 @@ import PriceFactory from '../../Business/Factory/PriceFactory';
 import TxFactory from '../../Business/Factory/TxFactory';
 import TxParamInfo from '../../DTO/Domain/TxParamInfo';
 import AuthFactory from '../../Business/Factory/AuthFactory';
+import { openSTXTransfer } from '@stacks/connect';
+import { AnchorMode, PostConditionMode } from '@stacks/transactions';
 
 export default function SwapProvider(props: any) {
 
@@ -280,8 +282,8 @@ export default function SwapProvider(props: any) {
                         btcToStx: true,
                         btcAddress: userSession.btcAddress,
                         stxAddress: userSession.stxAddress,
-                        btcAmount: amount,
-                        btcTxid: txid
+                        btcTxid: txid,
+                        stxTxid: null
                     }
                     TxFactory.TxBusiness.createTx(param).then((ret) => {
                         if (ret.sucesso) {
@@ -307,6 +309,51 @@ export default function SwapProvider(props: any) {
             }
             else {
                 // transaction in STX
+                let amount = parseInt((origAmount * 1000000).toFixed(0));
+                openSTXTransfer({
+                    network: 'testnet', // which network to use; ('mainnet' or 'testnet')
+                    anchorMode: AnchorMode.Any, // which type of block the tx should be mined in
+                  
+                    recipient: stxPoolAddress, // which address we are sending to
+                    amount: BigInt(amount), // tokens, denominated in micro-STX
+                  
+                    onFinish: (response: any) => {
+                      // WHEN user confirms pop-up
+                      console.log(response.txid); // the response includes the txid of the transaction
+                      setCurrentTxId(response.txid);
+                      let param: TxParamInfo = {
+                          btcToStx: false,
+                          btcAddress: userSession.btcAddress,
+                          stxAddress: userSession.stxAddress,
+                          stxTxid: response.txid,
+                          btcTxid: null
+                      }
+                      TxFactory.TxBusiness.createTx(param).then((ret) => {
+                          if (ret.sucesso) {
+                              let retSuccess = {
+                                  ...ret,
+                                  sucesso: true,
+                                  mensagemSucesso: "Transaction started successfully"
+                              };
+                              setLoadingExecute(false);
+                              callback(retSuccess);
+                          }
+                          else {
+                              let retErro = {
+                                  ...ret,
+                                  sucesso: false,
+                                  mensagemErro: ret.mensagem
+                              };
+                              setLoadingExecute(false);
+                              callback(retErro);
+                          }
+                      });
+                    },
+                    onCancel: () => {
+                      // WHEN user cancels/closes pop-up
+                      console.log('User canceled');
+                    },
+                });
             }
             return ret;
         }

@@ -102,6 +102,14 @@ export default function SwapForm() {
                                         <Col md="6">
                                             <Form.Label htmlFor="origAmount">Amount:</Form.Label>
                                             <Form.Group as={Col}>
+                                                <Form.Control
+                                                    type="number" size="lg"
+                                                    style={{ textAlign: 'right' }}
+                                                    value={swapContext.origAmount}
+                                                    onChange={(e) => {
+                                                        swapContext.setOrigAmount(parseFloat(e.target.value));
+                                                    }}></Form.Control>
+                                                {/*
                                                 <CurrencyInput
                                                     className='form-control form-control-lg'
                                                     decimalSeparator="."
@@ -115,13 +123,14 @@ export default function SwapForm() {
                                                     disableGroupSeparators={true}
                                                     disableAbbreviations={true}
                                                     value={swapContext.origAmount}
-                                                    //</Form.Group>onChange={(e) => {
+                                                    //onChange={(e) => {
                                                         //swapContext.setOrigAmount(parseFloat(e.target.value));
                                                     //}}
                                                     onValueChange={(value, name, values) => {
                                                         swapContext.setOrigAmount(values.float);
                                                     }}
                                                 ></CurrencyInput>
+                                                */}
                                                 <Form.Text className='text-right' muted>Pool Balance {swapContext.getFormatedOrigBalance()}</Form.Text>
                                             </Form.Group>
                                         </Col>
@@ -167,6 +176,12 @@ export default function SwapForm() {
                                         <Col md="6">
                                             <Form.Label htmlFor="destAmount">Amount:</Form.Label>
                                             <Form.Group as={Col}>
+                                                <Form.Control
+                                                    type="number" size="lg"
+                                                    style={{ textAlign: 'right' }}
+                                                    value={swapContext.destAmount}>
+                                                </Form.Control>
+                                                {/*
                                                 <CurrencyInput
                                                     className='form-control form-control-lg'
                                                     decimalSeparator="."
@@ -179,6 +194,7 @@ export default function SwapForm() {
                                                     disableGroupSeparators={true}
                                                     value={swapContext.destAmount}
                                                 ></CurrencyInput>
+                                                */}
                                                 <Form.Text className='text-right' muted>Pool Balance {swapContext.getFormatedDestBalance()}</Form.Text>
                                             </Form.Group>
                                         </Col>

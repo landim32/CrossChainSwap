@@ -41,7 +41,7 @@ namespace NoChainSwap.Domain.Impl.Services
             }
         }
 
-        public async Task<TxInfo> GetTransaction(string txid)
+        public async Task<MemPoolTxInfo> GetTransaction(string txid)
         {
             using (var client = new HttpClient())
             {
@@ -50,7 +50,7 @@ namespace NoChainSwap.Domain.Impl.Services
                 response.EnsureSuccessStatusCode();
                 var responseBody = await response.Content.ReadAsStringAsync();
 
-                return JsonConvert.DeserializeObject<TxInfo>(responseBody);
+                return JsonConvert.DeserializeObject<MemPoolTxInfo>(responseBody);
             }
         }
     }
