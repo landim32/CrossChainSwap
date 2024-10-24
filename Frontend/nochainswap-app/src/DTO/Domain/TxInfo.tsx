@@ -9,12 +9,12 @@ export default interface TxInfo {
     createat: string;
     updateat: string;
     status: string;
-    btctxid: string;
-    btctxidurl: string;
-    stxtxid: string;
-    stxtxidurl: string;
-    btcfee: string;
-    stxfee: string;
+    btctxid?: string;
+    btctxidurl?: string;
+    stxtxid?: string;
+    stxtxidurl?: string;
+    btcfee?: string;
+    stxfee?: string;
     btcamount: string;
     stxamount: string;
   }

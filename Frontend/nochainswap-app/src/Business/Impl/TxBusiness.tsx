@@ -57,6 +57,7 @@ const TxBusiness: ITxBusiness = {
     try {
       let ret: BusinessResult<TxInfo[]> = null;
       let retServ = await _txService.listAllTx();
+      console.log("ret: ", retServ);
       if (retServ.sucesso) {
         return {
           ...ret,

@@ -1,3 +1,5 @@
+import TxInfo from "../../DTO/Domain/TxInfo";
+import TxLogInfo from "../../DTO/Domain/TxLogInfo";
 import TxParamInfo from "../../DTO/Domain/TxParamInfo";
 import { PoolResult } from "../../DTO/Services/PoolResult";
 import StatusRequest from "../../DTO/Services/StatusRequest";
@@ -31,10 +33,13 @@ const TxService : ITxService = {
     },
     getTx: async (txid: string) => {
         let ret: TxResult;
-        let request = await _httpClient.doGet<TxResult>("api/Transaction/gettransaction/" + txid, {});
+        let request = await _httpClient.doGet<TxInfo>("api/Transaction/gettransaction/" + txid, {});
         if (request.success) {
-            request.data.sucesso = true;
-            return request.data;
+            return {
+                sucesso: true,
+                transaction: request.data,
+                ...ret
+            };
         }
         else {
             ret = {
@@ -47,10 +52,13 @@ const TxService : ITxService = {
     },
     listAllTx: async () => {
         let ret: TxListResult;
-        let request = await _httpClient.doGet<TxListResult>("api/Transaction/listalltransactions", {});
+        let request = await _httpClient.doGet<TxInfo[]>("api/Transaction/listalltransactions", {});
         if (request.success) {
-            request.data.sucesso = true;
-            return request.data;
+            return {
+                sucesso: true,
+                transactions: request.data,
+                ...ret
+            };
         }
         else {
             ret = {
@@ -63,10 +71,13 @@ const TxService : ITxService = {
     },
     listTxLogs: async (txid: number) => {
         let ret: TxLogListResult;
-        let request = await _httpClient.doGet<TxLogListResult>("api/Transaction/listtransactionlog/" + txid, {});
+        let request = await _httpClient.doGet<TxLogInfo[]>("api/Transaction/listtransactionlog/" + txid, {});
         if (request.success) {
-            request.data.sucesso = true;
-            return request.data;
+            return {
+                sucesso: true,
+                logs: request.data,
+                ...ret
+            };
         }
         else {
             ret = {

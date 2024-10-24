@@ -12,6 +12,7 @@ import SwapContext from '../../Contexts/Swap/SwapContext';
 import { CoinEnum } from '../../DTO/Enum/CoinEnum';
 import Modal from 'react-bootstrap/Modal';
 import ProviderResult from '../../DTO/Contexts/ProviderResult';
+import CurrencyInput from 'react-currency-input-field';
 
 export default function SwapForm() {
 
@@ -101,17 +102,26 @@ export default function SwapForm() {
                                         <Col md="6">
                                             <Form.Label htmlFor="origAmount">Amount:</Form.Label>
                                             <Form.Group as={Col}>
-                                                <Form.Control
-                                                    size="lg"
-                                                    type="number"
-                                                    step="0.1"
+                                                <CurrencyInput
+                                                    className='form-control form-control-lg'
+                                                    decimalSeparator="."
+                                                    groupSeparator=","
+                                                    defaultValue={0.00000}
+                                                    //defaultValue={swapContext.origAmount}
                                                     style={{ textAlign: 'right' }}
-                                                    id="origAmount"
+                                                    decimalScale={5}
+                                                    fixedDecimalLength={5}
+                                                    allowNegativeValue={false}
+                                                    disableGroupSeparators={true}
+                                                    disableAbbreviations={true}
                                                     value={swapContext.origAmount}
-                                                    onChange={(e) => {
-                                                        swapContext.setOrigAmount(parseFloat(e.target.value));
+                                                    //</Form.Group>onChange={(e) => {
+                                                        //swapContext.setOrigAmount(parseFloat(e.target.value));
+                                                    //}}
+                                                    onValueChange={(value, name, values) => {
+                                                        swapContext.setOrigAmount(values.float);
                                                     }}
-                                                />
+                                                ></CurrencyInput>
                                                 <Form.Text className='text-right' muted>Pool Balance {swapContext.getFormatedOrigBalance()}</Form.Text>
                                             </Form.Group>
                                         </Col>
@@ -157,15 +167,18 @@ export default function SwapForm() {
                                         <Col md="6">
                                             <Form.Label htmlFor="destAmount">Amount:</Form.Label>
                                             <Form.Group as={Col}>
-                                                <Form.Control
-                                                    size="lg"
-                                                    type="number"
-                                                    step="0.1"
-                                                    id="destAmount"
-                                                    readOnly={true}
+                                                <CurrencyInput
+                                                    className='form-control form-control-lg'
+                                                    decimalSeparator="."
+                                                    groupSeparator=","
+                                                    defaultValue={0.00000}
                                                     style={{ textAlign: 'right' }}
+                                                    decimalScale={5}
+                                                    fixedDecimalLength={5}
+                                                    allowNegativeValue={false}
+                                                    disableGroupSeparators={true}
                                                     value={swapContext.destAmount}
-                                                />
+                                                ></CurrencyInput>
                                                 <Form.Text className='text-right' muted>Pool Balance {swapContext.getFormatedDestBalance()}</Form.Text>
                                             </Form.Group>
                                         </Col>
@@ -177,9 +190,14 @@ export default function SwapForm() {
                                 <Col md="4" className='offset-md-4'>
                                     <view className='d-grid gap-2'>
                                         <Button size="lg" variant="primary" onClick={() => {
-                                            setShowModal(true);
+                                            if (swapContext.origAmount > 0) {
+                                                setShowModal(true);
+                                            }
+                                            else {
+                                                alert("Amount is empty!");
+                                            }
                                         }}>
-                                            <FontAwesomeIcon icon={faRetweet} /> Swap
+                                            Swap
                                         </Button>
                                     </view>
                                 </Col>

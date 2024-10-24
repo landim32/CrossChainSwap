@@ -6,6 +6,7 @@ import ContextBuilder from './Contexts/Utils/ContextBuilder';
 import AuthProvider from './Contexts/Auth/AuthProvider';
 import SwapProvider from './Contexts/Swap/SwapProvider';
 import ListTxPage from './Pages/ListTxPage';
+import TxProvider from './Contexts/Transaction/TxProvider';
 
 function Error404() {
   return (
@@ -25,7 +26,7 @@ function Layout() {
 }
 
 function App() {
-  const ContextContainer = ContextBuilder([AuthProvider, SwapProvider]);
+  const ContextContainer = ContextBuilder([AuthProvider, SwapProvider, TxProvider]);
 
   return (
     <ContextContainer>
